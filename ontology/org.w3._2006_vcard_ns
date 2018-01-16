@@ -66,15 +66,15 @@
         rdfs:label        "Neighbor"@en ;
         rdfs:subClassOf   :RelatedType .
 
-:Coworker  a              owl:Class ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "Coworker"@en ;
-        rdfs:subClassOf   :RelatedType .
-
 :RelatedType  a           owl:Class ;
         rdfs:comment      "Used for relation type codes. The URI of the relation type code must be used as the value for the Relation Type."@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "Relation Type"@en .
+
+:Coworker  a              owl:Class ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "Coworker"@en ;
+        rdfs:subClassOf   :RelatedType .
 
 :Me     a                 owl:Class ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -607,16 +607,16 @@
         rdfs:label        "has email"@en ;
         rdfs:range        :Email .
 
+:hasInstantMessage  a     owl:ObjectProperty ;
+        rdfs:comment      "To specify the instant messaging and presence protocol communications with the object. (Was called IMPP in RFC6350)"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "has messaging"@en .
+
 :postal-code  a           owl:DatatypeProperty ;
         rdfs:comment      "The postal code associated with the address of the object"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "postal code"@en ;
         rdfs:range        xsd:string .
-
-:hasInstantMessage  a     owl:ObjectProperty ;
-        rdfs:comment      "To specify the instant messaging and presence protocol communications with the object. (Was called IMPP in RFC6350)"@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "has messaging"@en .
 
 :Gender  a                owl:Class ;
         rdfs:comment      "Used for gender codes. The URI of the gender code must be used as the value for Gender."@en ;
@@ -670,6 +670,11 @@
         rdfs:label        "Tel"@en ;
         owl:deprecated    true .
 
+:hasAdditionalName  a     owl:ObjectProperty ;
+        rdfs:comment      "Used to support property parameters for the additional name data property"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "has additional name"@en .
+
 :hasNote  a               owl:ObjectProperty ;
         rdfs:comment      "Used to support property parameters for the note data property"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -681,11 +686,6 @@
         rdfs:label        "Individual"@en ;
         rdfs:subClassOf   :Kind ;
         owl:disjointWith  :Organization , :Location .
-
-:hasAdditionalName  a     owl:ObjectProperty ;
-        rdfs:comment      "Used to support property parameters for the additional name data property"@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "has additional name"@en .
 
 :Unknown  a               owl:Class ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -776,11 +776,6 @@
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "has value"@en .
 
-:Crush  a                 owl:Class ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "Crush"@en ;
-        rdfs:subClassOf   :RelatedType .
-
 :Dom    a                 owl:Class ;
         rdfs:comment      "This class is deprecated"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -801,6 +796,11 @@
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "Home"@en ;
         rdfs:subClassOf   :Type .
+
+:Crush  a                 owl:Class ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "Crush"@en ;
+        rdfs:subClassOf   :RelatedType .
 
 :hasOrganizationUnit  a   owl:ObjectProperty ;
         rdfs:comment      "Used to support property parameters for the organization unit name data property"@en ;

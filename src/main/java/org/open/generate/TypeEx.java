@@ -1,25 +1,19 @@
 package org.open.generate;
 
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
 
-public class TypeEx {
+public abstract class TypeEx extends Binding {
 
-	public TypeEx(Type cls, RDFNode resource) {
-		this.setType(cls);
-		this.setSource(resource);
+	public TypeEx(Binding parent, RDFNode resource, Type target) {
+		super(parent, resource, target);
 	}
+
 	public Type getType() {
-		return type;
+		return (Type) target;
 	}
-	public void setType(Type type) {
-		this.type = type;
+
+	public Resource getSource() {
+		return (Resource) source;
 	}
-	public RDFNode getSource() {
-		return source;
-	}
-	public void setSource(RDFNode source) {
-		this.source = source;
-	}
-	protected Type type;
-	private RDFNode source;
 }

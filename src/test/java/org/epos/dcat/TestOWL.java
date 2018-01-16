@@ -22,7 +22,7 @@ import org.open.generate.RDFSUtils;
 public class TestOWL {
 
 	@Test
-	public void test() throws IOException {
+	public void testOWL2Java() throws IOException {
 
 		List<RDFFile> files = new ArrayList<RDFFile>();
 		Files.list(Paths.get("ontology")).forEach(path -> {
@@ -75,8 +75,8 @@ public class TestOWL {
 		RDFS2Java trans = new RDFS2Java(null);
 		Entry<String, Model> pack = RDFSUtils.readWriteModel("ontology/org.w3._2004_02_skos_core", "TURTLE");
 		Resource resource = pack.getValue().getResource("http://www.w3.org/2004/02/skos/core#member");
-		PackageEx ex = trans.getConfiguration().createPackageEx(pack.getKey(), pack.getValue());
-		trans.getRange(resource, ex);
+		PackageEx ex = trans.createPackageEx(pack.getKey(), pack.getValue());
+		trans.getRanges(ex, resource);
 	}
 
 }

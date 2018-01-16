@@ -9,18 +9,34 @@ import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.epos.rdf.RDFMapper;
+import org.epos.rdf.RDFWriter;
 import org.junit.Test;
 import org.open.generate.Class;
+import org.open.generate.Package;
+import org.w3._2002_07_owl.Thing;
+
+import com.xmlns.foaf_0_1.Document;
 
 public class TestRDFMapper {
 
-//	@Test
-//	public void test() {
-//		RDFMapper mapper = new RDFMapper();
-//		// mapper.handleField(new Class());
-//		mapper.toRDF(new Class()).write(System.out);
-//	}
+	@Test
+	public void test() {
+		RDFWriter mapper = new RDFWriter();
+		// mapper.handleField(new Class());
+		Document document = new Document();
+		document.set_primaryTopic(new Thing());
+		mapper.write(document).write(System.out);
+	}
+
+	@Test
+	public void testFindRDFClass() {
+		RDFWriter mapper = new RDFWriter();
+		Model rdf_model = ModelFactory.createDefaultModel();
+		Resource resource = mapper.findRDFClass(rdf_model, Class.class);
+		System.out.println(resource.getURI());
+		// mapper.handleField(new Class());
+		// mapper.toRDF(new Class(new Package("temp"), "class")).write(System.out);
+	}
 
 	@Test
 	public void testRDFModel() {
@@ -42,9 +58,10 @@ public class TestRDFMapper {
 			resource.addLiteral(RDFS.comment, comment);
 		return resource;
 	}
+
 	public Resource createSubject(Model model, String label, String comment, Resource parent) {
 		Resource resource = createSubject(model, label, comment);
-		if(parent != null)
+		if (parent != null)
 			resource.addProperty(RDFS.subClassOf, parent);
 		return resource;
 	}

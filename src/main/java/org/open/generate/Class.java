@@ -8,8 +8,6 @@ import org.epos.rdf.annotation.RDF;
 @RDF(namespace = "http://somewhere/else#", local = "Class")
 public class Class extends Type {
 
-	
-
 	private List<Field> fields;
 
 	private List<Field> staticFields;
@@ -19,7 +17,8 @@ public class Class extends Type {
 	public Class(Package pack, String name) {
 		setName(name);
 		setContainer(pack);
-		getContainer().addClass(this);
+		if (pack != null)
+			pack.addClass(this);
 	}
 
 	public void addField(Field field) {
@@ -51,15 +50,15 @@ public class Class extends Type {
 		this.superClass = class1;
 	}
 
-	List<Interface> intfc = null;;
+	List<Interface> _interface = null;;
+
 	public void addInterface(Interface result) {
-		getInterface().add(result);
+		get_interface().add(result);
 	}
 
-	public List<Interface> getInterface() {
-		if(intfc == null)
-			intfc = new ArrayList<Interface>();
-		// TODO Auto-generated method stub
-		return intfc;
+	public List<Interface> get_interface() {
+		if (_interface == null)
+			_interface = new ArrayList<Interface>();
+		return _interface;
 	}
 }

@@ -18,6 +18,8 @@ public abstract class Type {
 	}
 
 	public void setContainer(Package pack) {
-		this.container = pack;
+		if (pack != container) {
+			this.container = pack;
+		}
 	}
 }

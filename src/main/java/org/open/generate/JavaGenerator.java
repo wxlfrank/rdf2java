@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.epos.tranform.RDFS2Java;
 import org.epos.tranform.TransformUtils;
 
 public class JavaGenerator {
 	private RDFS2JavaConfiguration configuration = null;
+	private RDFS2Java rdfs2Java = null;
 
-	public JavaGenerator(RDFS2JavaConfiguration configuration) {
-		this.configuration = configuration;
+	public JavaGenerator(RDFS2Java rdfs2Java, RDFS2JavaConfiguration configuration2) {
+		this.configuration = configuration2;
+		this.rdfs2Java = rdfs2Java;
 	}
 
 	private static final String IMPORT_FORMAT = "import %s;%n";
@@ -53,6 +56,7 @@ public class JavaGenerator {
 	private final static String CLASS_END = String.format("}%n");
 	private final static String CLASS_EXTENDS = " extends %s";
 	private final static String CLASS_IMPLEMENTS = " implements %s";
+	private final static String CLASS_RDF_ANNOTATION = "@RDF(namespace = \"%1$s\", local = \"%2$s\")%n";
 	private final static String CLASS_HEADER = "public class %s";
 	private final static String CLASS_START = String.format("{%n");
 
@@ -68,7 +72,7 @@ public class JavaGenerator {
 				if (!result.containsKey(type)) {
 					if (type.getContainer().getName().equals(Constants.XMLSchema_URI)) {
 						switch (type.getName()) {
-						case "interger":
+						case "integer":
 							result.put(type, "int");
 							break;
 						case "string":
@@ -93,12 +97,9 @@ public class JavaGenerator {
 	private Map<String, Set<Type>> getDependentTypes(Class cls) {
 		Map<String, Set<Type>> sameNamedType = new HashMap<String, Set<Type>>();
 		Class superClass = cls.getSuperClass();
-		// System.out.println("********************");
-		// System.out.println(RDFUtils.getPackageName(cls.getContainer().getName()) +
-		// "." + cls.getName());
 		if (superClass != null)
 			Utils.putIntoMap(sameNamedType, superClass.getName(), superClass);
-		cls.getInterface().forEach(intfc -> Utils.putIntoMap(sameNamedType, intfc.getName(), intfc));
+		cls.get_interface().forEach(intfc -> Utils.putIntoMap(sameNamedType, intfc.getName(), intfc));
 		cls.getFields().forEach(field -> {
 			Type type = field.getType();
 			if (type != null)
@@ -122,20 +123,24 @@ public class JavaGenerator {
 		return result;
 	}
 
+	/**
+	 * Generate the body of the java class {@code cls}
+	 * 
+	 * @param cls
+	 *            the class to be translated
+	 * @param type2name
+	 *            the hash table that maps the type of a field to its generated name
+	 * @return
+	 */
 	protected String toJavaClassBody(Class cls, Map<Type, String> type2name) {
-		// System.out.println("________________");
-		// System.out.println(RDFUtils.getPackageName(cls.getContainer().getName()) +
-		// "." + cls.getName());
-		// type2name.forEach((type, str) -> {
-		// System.out.println(type.getName() + str);
-		// });
 		StringBuffer buffer = new StringBuffer();
+		buffer.append(String.format(CLASS_RDF_ANNOTATION, cls.getContainer().getName(), cls.getName()));
 		buffer.append(String.format(CLASS_HEADER, cls.getName()));
 		Class superClass = cls.getSuperClass();
 		if (superClass != null)
 			buffer.append(String.format(CLASS_EXTENDS, type2name.get(superClass)));
 		List<String> intfcs = new ArrayList<String>();
-		cls.getInterface().forEach(intfc -> intfcs.add(type2name.get(intfc)));
+		cls.get_interface().forEach(intfc -> intfcs.add(type2name.get(intfc)));
 		if (!intfcs.isEmpty())
 			buffer.append(String.format(CLASS_IMPLEMENTS, String.join(", ", intfcs)));
 		buffer.append(CLASS_START);
@@ -150,19 +155,33 @@ public class JavaGenerator {
 		return buffer.toString();
 	}
 
-	private static final String FIELD_FORMAT = "\tprivate %1$s %2$s;%n" + "\tpublic %1$s get%3$s() {%n"
-			+ "\t\treturn %2$s;%n" + "\t}%n" + "\tpublic void set%3$s(%1$s %2$s) {%n" + "\t\tthis.%2$s = %2$s;%n"
+	private static final String FIELD_RDF_ANNOTATION = "\t@RDF(namespace = \"%4$s\", local = \"%5$s\")%n";
+	private static final String FIELD_DECLARE = "\tprivate %1$s %2$s;%n";
+	private static final String FIELD_GETTER = "\tpublic %1$s get%3$s() {%n" + "\t\treturn %2$s;%n" + "\t}%n";
+	private static final String FIELD_SETTER = "\tpublic void set%3$s(%1$s %2$s) {%n" + "\t\tthis.%2$s = %2$s;%n"
 			+ "\t}%n";
+	private static final String FIELD_FORMAT = FIELD_RDF_ANNOTATION + FIELD_DECLARE + FIELD_GETTER + FIELD_SETTER;
 
+	/**
+	 * Generate java fields and their getters and setters respectively
+	 * 
+	 * @param type2name
+	 *            the hash table that maps the type of the {@code field} to its
+	 *            generated name
+	 * @param field
+	 *            the java field
+	 * @return the string representing the field
+	 */
 	protected String toJavaFieldStatement(Map<Type, String> type2name, Field field) {
 		Type type = field.getType();
 		String name = configuration.getFieldName(field.getName());
-		// System.out.println("************************" + field.getType());
-		// System.out.println(name + "->" + TransformUtils.getName(name));
+		Package pack = field.getContainer().getContainer();
 		return String.format(FIELD_FORMAT, type == null ? null : type2name.get(type), name,
-				TransformUtils.getName(name));
+				TransformUtils.getName(name), pack.getName(), field.getName());
 
 	}
+
+	public static final String RDF_ANNOTATION_IMPORT = String.format("import org.epos.rdf.annotation.RDF;%n");
 
 	public void generate(File location) {
 		if (!location.isDirectory() && configuration == null)
@@ -170,7 +189,8 @@ public class JavaGenerator {
 		if (!location.exists()) {
 			location.mkdirs();
 		}
-		configuration.getHash().forEach((ns, packex) -> {
+		rdfs2Java.getChildren().forEach((ns, bind) -> {
+			PackageEx packex = (PackageEx) bind;
 			Package pac = packex.getPackage();
 			if (packex != Constants.XMLSchema_Package) {
 				String pacName = RDFSUtils.getPackageName(pac.getName());
@@ -180,6 +200,19 @@ public class JavaGenerator {
 				}
 				String package_header = toPackageHeader(pacName);
 				write2File(pac_dir, PACKAGE_HEADER, package_header);
+				// for(ClassEx clsEx : packex.getClassexes()) {
+				// StringBuffer buffer = new StringBuffer();
+				// buffer.append(package_header);
+				// Map<String, Set<Type>> dependentTypes = getDependentTypes(cls);
+				// List<Type> importedTypes = getImportedTypes(cls, dependentTypes);
+				// importedTypes.forEach(importType -> {
+				// buffer.append(addImport(importType));
+				// });
+				// buffer.append(RDF_ANNOTATION_IMPORT);
+				// write2File(pac_dir, String.format(JAVA_FILE_FORMAT, cls.getName()),
+				// buffer.toString() + toJavaClassBody(cls, getTypeName(importedTypes,
+				// dependentTypes)));
+				// }
 				pac.getClasses().forEach(cls -> {
 					StringBuffer buffer = new StringBuffer();
 					buffer.append(package_header);
@@ -188,6 +221,7 @@ public class JavaGenerator {
 					importedTypes.forEach(importType -> {
 						buffer.append(addImport(importType));
 					});
+					buffer.append(RDF_ANNOTATION_IMPORT);
 					write2File(pac_dir, String.format(JAVA_FILE_FORMAT, cls.getName()),
 							buffer.toString() + toJavaClassBody(cls, getTypeName(importedTypes, dependentTypes)));
 				});

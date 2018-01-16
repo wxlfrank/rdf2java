@@ -26,20 +26,21 @@ import org.apache.jena.vocabulary.RDFS;
 
 public class RDFSUtils {
 	private static Map<Resource, Set<Resource>> domains = new HashMap<Resource, Set<Resource>>();
+
 	public static Set<Resource> getDomains(Resource resource) {
 		Set<Resource> result = domains.get(resource);
 		if (result != null)
 			return result;
 		Set<Resource> results = new HashSet<Resource>();
-		StmtIterator iterator = resource.getModel().listStatements(resource, RDFS.domain, (RDFNode) null);
-		while (iterator.hasNext()) {
-			results.add(iterator.next().getObject().asResource());
-		}
+		resource.getModel().listStatements(resource, RDFS.domain, (RDFNode) null).forEachRemaining(stm -> {
+			results.add(stm.getObject().asResource());
+		});
 		domains.put(resource, results);
 		return results;
 	}
 
 	private static Map<Resource, Set<Resource>> ranges = new HashMap<Resource, Set<Resource>>();
+
 	public static Set<Resource> getRanges(Resource resource) {
 		Set<Resource> result = ranges.get(resource);
 		if (result != null)
@@ -104,9 +105,6 @@ public class RDFSUtils {
 		if (result != null)
 			return result;
 		Set<Resource> find = new HashSet<Resource>();
-		model.listSubjectsWithProperty(RDF.type, RDF.Property).forEachRemaining(resource -> find.add(resource));
-		model.listSubjectsWithProperty(RDF.type, OWL.DatatypeProperty).forEachRemaining(resource -> find.add(resource));
-		model.listSubjectsWithProperty(RDF.type, OWL.ObjectProperty).forEachRemaining(resource -> find.add(resource));
 		properties.put(model, find);
 		return find;
 	}
@@ -118,8 +116,6 @@ public class RDFSUtils {
 		if (result != null)
 			return result;
 		Set<Resource> find = new HashSet<Resource>();
-		model.listSubjectsWithProperty(RDF.type, RDFS.Class).forEachRemaining(resource -> find.add(resource));
-		model.listSubjectsWithProperty(RDF.type, OWL.Class).forEachRemaining(resource -> find.add(resource));
 		classes.put(model, find);
 		return find;
 	}
@@ -211,6 +207,7 @@ public class RDFSUtils {
 		if (!url.equals("http://www.w3.org/2001/XMLSchema#") && !url.equals("http://schema.org/#")) {
 			model = model.read(url, format);
 			// base = (OntModel) base.union(model);
+			RDFSUtils.analyseModel(model);
 			ns = RDFSUtils.getRealNamespace(model);
 			if (url.equals(ns)) {
 				try {
@@ -285,5 +282,36 @@ public class RDFSUtils {
 			return getList(stm.getObject().asResource());
 		}
 		return null;
+	}
+
+	private static Map<Model, Set<Resource>> nodeshapes = new HashMap<Model, Set<Resource>>();
+
+	public static Set<Resource> getNodeShapes(Model model) {
+		Set<Resource> result = nodeshapes.get(model);
+		if (result != null)
+			return result;
+		Set<Resource> find = new HashSet<Resource>();
+		nodeshapes.put(model, find);
+		return find;
+	}
+
+	public static final String SHACL_NODESHAP = "http://www.w3.org/ns/shacl#NodeShape";
+
+	public static void analyseModel(Model model) {
+		StmtIterator iterator = model.listStatements((Resource) null, RDF.type, (RDFNode) null);
+		iterator.forEachRemaining(stmt -> {
+			Resource resource = stmt.getSubject();
+			RDFNode object = stmt.getObject();
+			if (object.isURIResource()) {
+				String uri = object.asResource().getURI();
+				if (uri.equals(RDFS.Class.getURI()) || uri.equals(OWL.Class.getURI()))
+					Utils.putIntoMap(classes, model, resource);
+				else if (uri.equals(RDF.Property.getURI()) || uri.equals(OWL.ObjectProperty.getURI())
+						|| uri.equals(OWL.DatatypeProperty.getURI()))
+					Utils.putIntoMap(properties, model, resource);
+				else if (uri.equals(SHACL_NODESHAP))
+					Utils.putIntoMap(nodeshapes, model, resource);
+			}
+		});
 	}
 }

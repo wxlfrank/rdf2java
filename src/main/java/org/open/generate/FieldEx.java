@@ -1,64 +1,44 @@
 package org.open.generate;
 
-import java.util.List;
+import java.util.Set;
 
 import org.apache.jena.rdf.model.Resource;
 
 /**
  * The binding class to bind a resource and the corresponding field in a class
+ * 
  * @author wxlfrank
  *
  */
-public class FieldEx {
+public class FieldEx extends Binding {
 
-	public FieldEx(ClassEx parent, Field result, Resource resource) {
-		this.parent = parent;
-		this.setField(result);
-		this.setSource(resource);
+	public FieldEx(ClassEx parent, Resource source, Field field) {
+		super(parent, source, field);
 	}
 
 	public Field getField() {
-		return field;
+		return (Field) getTarget();
 	}
-
-	public void setField(Field field) {
-		this.field = field;
-	}
-
-	public Resource getSource() {
-		return source;
-	}
-
-	public void setSource(Resource source) {
-		this.source = source;
-	}
-
-	private Field field;
-	private Resource source;
-
-	private ClassEx parent = null;
 
 	public ClassEx getClassEx() {
-		return parent;
+		return (ClassEx) parent;
 	}
 
-	public List<TypeEx> getType() {
-		return type;
+	public Set<TypeEx> getTypes() {
+		return types;
 	}
 
-	public void setType(List<TypeEx> typeEx, Type type) {
-		this.type = typeEx;
+	public void setType(Set<TypeEx> typeEx, Type type) {
+		this.types = typeEx;
 		if (type != null)
-			field.setType(type);
+			getField().setType(type);
 	}
 
-	private List<TypeEx> type = null;
+	private Set<TypeEx> types = null;
 
-	// public String toString() {
-	// String result = source.getURI();
-	// if(result == null)
-	// result = source.getId().toString();
-	// result += " -> Field " + field.getName();
-	// result += ":" + parent.toString() + "->" + String.join(" ", Collections.)
-	// }
+	@Override
+	public String getHashString() {
+		return getField().getName();
+	}
+
 }

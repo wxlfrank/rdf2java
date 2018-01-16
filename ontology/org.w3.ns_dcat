@@ -115,39 +115,39 @@ dcat:WebService  a        owl:Class , rdfs:Class ;
         a                voaf:Vocabulary , owl:Ontology ;
         rdfs:comment     "هي أنطولوجية تسهل تبادل البيانات بين مختلف الفهارس على الوب. استخدام هذه الأنطولوجية يساعد على اكتشاف قوائم  البيانات المنشورة على الوب و يمكن التطبيقات المختلفة من الاستفادة أتوماتيكيا من البيانات المتاحة من مختلف الفهارس."@ar , "DCAT is an RDF vocabulary designed to facilitate interoperability between data catalogs published on the Web.\n          By using DCAT to describe datasets in data catalogs, publishers increase discoverability and enable \n          applications easily to consume metadata from multiple catalogs. It further enables decentralized \n          publishing of catalogs and facilitates federated dataset search across sites. Aggregated DCAT metadata can \n          serve as a manifest file to facilitate digital preservation.\n          DCAT is defined at http://www.w3.org/TR/vocab-dcat/. Any variance between that normative\n          document and this schema is an error in this schema."@en , "DCAT es un vocabulario RDF diseñado para facilitar la interoperabilidad entre catálogo de datos publicados en la Web.\n          Gracias a utilizar DCAT para describir conjuntos de datos en los catálogo de datos, los editores aumentan el descubrimiento y permiten\n          que las aplicaciones consuman fácilmente los metadatos de varios catálogos."@es , "DCAT est un vocabulaire développé pour faciliter l'interopérabilité entre les jeux de données publiées sur le Web.\n\t\t\t\tEn utilisant DCAT pour décrire les jeux de données dans les catalogues de données, les fournisseurs de données augmentent leur découverte et permettent\n\t\t\t\tque les applications facilement les métadonnées de plusieurs catalogues. Il permet en plus la publication décentralisée des catalogues et facilitent\n\t\t\t\tla recherche fédérée des données entre plusieurs sites. Les métadonnées DCAT aggrégées peuvent servir comme un manifeste pour faciliter la préservation digitale des ressources.\n\t\t\t\tDCAT est définie à l'adresse http://www.w3.org/TR/vocab-dcat/. Une quelconque version de ce document normatif et ce vocabulaire est une erreur dans ce vocabulaire"@fr , "Το DCAT είναι ένα RDF λεξιλόγιο που σχεδιάσθηκε για να κάνει εφικτή τη διαλειτουργικότητα μεταξύ καταλόγων δεδομένων στον Παγκόσμιο Ιστό.\n          Χρησιμοποιώντας το DCAT για την περιγραφή συνόλων δεδομένων, οι εκδότες αυτών αυξάνουν την ανακαλυψιμότητα και επιτρέπουν στις εφαρμογές την εύκολη κατανάλωση μεταδεδομένων από πολλαπλούς καταλόγους.\n          Επιπλέον, δίνει τη δυνατότητα για αποκεντρωμένη έκδοση και διάθεση καταλόγων και επιτρέπει δυνατότητες ενοποιημένης αναζήτησης μεταξύ διαφορετικών πηγών.\n          Συγκεντρωτικά μεταδεδομένα που έχουν περιγραφεί με το DCAT μπορούν να χρησιμοποιηθούν σαν ένα δηλωτικό αρχείο (manifest file) ώστε να διευκολύνουν την ψηφιακή συντήρηση."@el , "DCATは、ウェブ上で公開されたデータ・カタログ間の相互運用性の促進を目的とするRDFの語彙です。このドキュメントでは、その利用のために、スキーマを定義し、例を提供します。\nデータ・カタログ内のデータセットを記述するためにDCATを用いると、公開者が、発見可能性を増加させ、アプリケーションが複数のカタログのメタデータを容易に利用できるようになります。さらに、カタログの分散公開を可能にし、複数のサイトにまたがるデータセットの統合検索を促進します。集約されたDCATメタデータは、ディジタル保存を促進するためのマニフェスト・ファイルとして使用できます。"@ja ;
         rdfs:label       "データ・カタログ語彙（DCAT）"@ja , "El vocabulario de catálogo de datos"@es , "Το λεξιλόγιο των καταλόγων δεδομένων"@el , "Le vocabulaire des jeux de données "@fr , "The data catalog vocabulary"@en , "أنطولوجية فهارس قوائم البيانات"@ar ;
-        dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://ec.europa.eu/dgs/informatics/> ;
-                                                 foaf:name      "European Commission, DG DIGIT"
-                                               ] ;
-                           foaf:name           "Vassilios Peristeras"
-                         ] ;
         dct:contributor  [ foaf:name  "Richard Cyganiak" ] ;
-        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
-                           foaf:name     "Ghislain Auguste Atemezing"
-                         ] ;
         dct:contributor  [ rdfs:seeAlso        <http://philarcher.org/foaf.rdf#me> ;
                            schema:affiliation  <http://www.w3.org/data#W3C> ;
                            foaf:homepage       <http://www.w3.org/People/all#phila> ;
                            foaf:name           "Phil Archer"
                          ] ;
         dct:contributor  [ foaf:name  "Martin Alvarez-Espinar" ] ;
-        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
-                           foaf:name      "Shuji Kamitsuna"
-                         ] ;
-        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
-        dct:contributor  [ rdfs:seeAlso   <http://makxdekkers.com/makxdekkers.rdf#me> ;
-                           foaf:homepage  <http://makxdekkers.com/> ;
-                           foaf:name      "Makx Dekkers"
-                         ] ;
-        dct:contributor  [ foaf:name  "Boris Villazón-Terrazas" ] ;
         dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://okfn.org> ;
                                                  foaf:name      "Open Knowledge Foundation"
                                                ] ;
                            foaf:name           "Rufus Pollock"
                          ] ;
-        dct:creator      [ foaf:name  "John Erickson" ] ;
+        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
+                           foaf:name      "Shuji Kamitsuna"
+                         ] ;
+        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
+                           foaf:name     "Ghislain Auguste Atemezing"
+                         ] ;
+        dct:contributor  [ rdfs:seeAlso   <http://makxdekkers.com/makxdekkers.rdf#me> ;
+                           foaf:homepage  <http://makxdekkers.com/> ;
+                           foaf:name      "Makx Dekkers"
+                         ] ;
+        dct:contributor  [ foaf:name  "Boris Villazón-Terrazas" ] ;
+        dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://ec.europa.eu/dgs/informatics/> ;
+                                                 foaf:name      "European Commission, DG DIGIT"
+                                               ] ;
+                           foaf:name           "Vassilios Peristeras"
+                         ] ;
+        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
         dct:creator      [ rdfs:seeAlso  <http://fadmaa.me/foaf.ttl> ;
                            foaf:name     "Fadi Maali"
                          ] ;
+        dct:creator      [ foaf:name  "John Erickson" ] ;
         dct:modified     "2013-11-28"^^xsd:date , "2013-09-20"^^xsd:date , "2012-04-24"^^xsd:date ;
         foaf:maker       [ foaf:homepage  <http://www.w3.org/2011/gld/> ;
                            foaf:name      "Government Linked Data WG"
