@@ -19,14 +19,30 @@ import com.xmlns.foaf_0_1.Document;
 
 public class TestRDFMapper {
 
-	@Test
-	public void test() {
-		RDFWriter mapper = new RDFWriter();
-		// mapper.handleField(new Class());
-		Document document = new Document();
-		document.set_primaryTopic(new Thing());
-		mapper.write(document).write(System.out);
+	public Resource createSubject(Model model, String label, String comment) {
+		String uri = model.getNsPrefixURI("");
+		Resource resource = model.createResource(uri + label).addLiteral(RDFS.isDefinedBy, uri)
+				.addProperty(RDF.type, RDFS.Class).addLiteral(RDFS.label, label);
+		if (comment != null && !comment.isEmpty())
+			resource.addLiteral(RDFS.comment, comment);
+		return resource;
 	}
+
+	public Resource createSubject(Model model, String label, String comment, Resource parent) {
+		Resource resource = createSubject(model, label, comment);
+		if (parent != null)
+			resource.addProperty(RDFS.subClassOf, parent);
+		return resource;
+	}
+
+//	@Test
+//	public void test() {
+//		RDFWriter mapper = new RDFWriter();
+//		// mapper.handleField(new Class());
+//		Document document = new Document();
+//		document.set_primaryTopic(new Thing());
+//		mapper.write(document).write(System.out);
+//	}
 
 	@Test
 	public void testFindRDFClass() {
@@ -48,22 +64,6 @@ public class TestRDFMapper {
 		Resource resource = createSubject(model, "Resource", "The class resource, everything.");
 		createSubject(model, "Class", "The class of classes.", resource);
 		model.write(System.out, "N3");
-	}
-
-	public Resource createSubject(Model model, String label, String comment) {
-		String uri = model.getNsPrefixURI("");
-		Resource resource = model.createResource(uri + label).addLiteral(RDFS.isDefinedBy, uri)
-				.addProperty(RDF.type, RDFS.Class).addLiteral(RDFS.label, label);
-		if (comment != null && !comment.isEmpty())
-			resource.addLiteral(RDFS.comment, comment);
-		return resource;
-	}
-
-	public Resource createSubject(Model model, String label, String comment, Resource parent) {
-		Resource resource = createSubject(model, label, comment);
-		if (parent != null)
-			resource.addProperty(RDFS.subClassOf, parent);
-		return resource;
 	}
 
 }

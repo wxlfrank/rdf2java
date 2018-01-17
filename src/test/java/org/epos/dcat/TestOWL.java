@@ -6,20 +6,30 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
 import org.epos.tranform.RDFFile;
 import org.epos.tranform.RDFS2Java;
 import org.junit.Test;
-import org.open.generate.PackageEx;
 import org.open.generate.RDFSUtils;
 
 public class TestOWL {
+
+	@Test
+	public void test2() throws MalformedURLException {
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
+		model.read(Paths.get("ontology/epos-dcat-ap_shapes.ttl").toUri().toURL().toString(), "TURTLE");
+		Model base = model.getBaseModel();
+		base.listSubjects().forEachRemaining(resource -> {
+			if (resource.isAnon())
+				System.out.println(resource.getId());
+			else
+				System.out.println(resource.getURI());
+		});
+	}
 
 	@Test
 	public void testOWL2Java() throws IOException {
@@ -46,37 +56,15 @@ public class TestOWL {
 		System.out.println(name + "->" + RDFSUtils.getPackageName(name));
 	}
 
-	@Test
-	public void test2() throws MalformedURLException {
-		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM);
-		model.read(Paths.get("ontology/epos-dcat-ap_shapes.ttl").toUri().toURL().toString(), "TURTLE");
-		Model base = model.getBaseModel();
-		// Resource resource =
-		// model.getResource("http://www.w3.org/2006/vcard/ns#anniversary");
-		// System.out.println(resource);
-		// Resource emptynode =
-		// resource.getProperty(RDFS.range).getObject().asResource();
-		// System.out.println(emptynode.getURI());
-		// System.out.println(emptynode.getNameSpace());
-		// System.out.println(emptynode.getLocalName());
-		// System.out.println(emptynode.getId());
-		base.listSubjects().forEachRemaining(resource -> {
-			if (resource.isAnon())
-				System.out.println(resource.getId());
-			else
-				System.out.println(resource.getURI());
-		});
-		// base.listStatements().forEachRemaining(stm ->
-		// System.out.println(stm.getSubject().getURI()));
-	}
-
-	@Test
-	public void testRange() {
-		RDFS2Java trans = new RDFS2Java(null);
-		Entry<String, Model> pack = RDFSUtils.readWriteModel("ontology/org.w3._2004_02_skos_core", "TURTLE");
-		Resource resource = pack.getValue().getResource("http://www.w3.org/2004/02/skos/core#member");
-		PackageEx ex = trans.createPackageEx(pack.getKey(), pack.getValue());
-		trans.getRanges(ex, resource);
-	}
+	// @Test
+	// public void testRange() {
+	// RDFS2Java trans = new RDFS2Java(null);
+	// Entry<String, Model> pack =
+	// RDFSUtils.readWriteModel("ontology/org.w3._2004_02_skos_core", "TURTLE");
+	// Resource resource =
+	// pack.getValue().getResource("http://www.w3.org/2004/02/skos/core#member");
+	// PackageEx ex = trans.createPackageEx(pack.getKey(), pack.getValue());
+	// trans.getRanges(ex, resource);
+	// }
 
 }

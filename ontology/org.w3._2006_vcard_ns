@@ -66,15 +66,15 @@
         rdfs:label        "Neighbor"@en ;
         rdfs:subClassOf   :RelatedType .
 
-:RelatedType  a           owl:Class ;
-        rdfs:comment      "Used for relation type codes. The URI of the relation type code must be used as the value for the Relation Type."@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "Relation Type"@en .
-
 :Coworker  a              owl:Class ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "Coworker"@en ;
         rdfs:subClassOf   :RelatedType .
+
+:RelatedType  a           owl:Class ;
+        rdfs:comment      "Used for relation type codes. The URI of the relation type code must be used as the value for the Relation Type."@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "Relation Type"@en .
 
 :Me     a                 owl:Class ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;

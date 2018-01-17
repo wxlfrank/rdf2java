@@ -1,8 +1,5 @@
 package org.open.generate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.jena.rdf.model.Resource;
 
 public class ClassEx extends TypeEx {

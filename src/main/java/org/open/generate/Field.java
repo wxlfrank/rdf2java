@@ -19,6 +19,10 @@ public class Field {
 		return container;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public Type getType() {
 		return type;
 	}
@@ -33,7 +37,11 @@ public class Field {
 		this.type = type;
 	}
 
-	public String getName() {
-		return name;
+	private int multiplicity;
+	public int getMultiplicity() {
+		return multiplicity;
+	}
+	public void setMultiplicity(int maxValue) {
+		multiplicity = maxValue;
 	}
 }

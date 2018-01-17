@@ -1,5 +1,6 @@
 package org.open.generate;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.jena.rdf.model.Resource;
@@ -12,19 +13,28 @@ import org.apache.jena.rdf.model.Resource;
  */
 public class FieldEx extends Binding {
 
+	private Set<TypeEx> types = null;
+
 	public FieldEx(ClassEx parent, Resource source, Field field) {
 		super(parent, source, field);
-	}
-
-	public Field getField() {
-		return (Field) getTarget();
 	}
 
 	public ClassEx getClassEx() {
 		return (ClassEx) parent;
 	}
 
+	public Field getField() {
+		return (Field) getTarget();
+	}
+
+	@Override
+	public String getHashString() {
+		return getField().getName();
+	}
+
 	public Set<TypeEx> getTypes() {
+		if (types == null)
+			types = new HashSet<TypeEx>();
 		return types;
 	}
 
@@ -34,11 +44,15 @@ public class FieldEx extends Binding {
 			getField().setType(type);
 	}
 
-	private Set<TypeEx> types = null;
+	public void setTypeEx(ClassEx class1) {
+		if (class1 != null) {
+			Set<TypeEx> types = getTypes();
+			if (!types.isEmpty())
+				types.clear();
+			types.add(class1);
+			getField().setType(class1.get_Class());
+		}
 
-	@Override
-	public String getHashString() {
-		return getField().getName();
 	}
 
 }
