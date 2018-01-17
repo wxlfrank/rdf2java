@@ -35,6 +35,7 @@ public class JavaGenerator {
 	private static final String JAVA_FILE_FORMAT = "%s.java";
 	private static final String PACKAGE_FORMAT = "package %s;%n";
 	private static final String PACKAGE_HEADER = String.format(JAVA_FILE_FORMAT, "package-info");
+	private static final String PACKAGE_RDF_ANNOTATION = "@RDF(namespace = \"%1$s\")%n";
 
 	private RDFS2JavaConfiguration configuration = null;
 
@@ -61,7 +62,7 @@ public class JavaGenerator {
 					pac_dir.mkdirs();
 				}
 				String package_header = toPackageHeader(pacName);
-				write2File(pac_dir, PACKAGE_HEADER, package_header);
+				write2File(pac_dir, PACKAGE_HEADER, String.format(PACKAGE_RDF_ANNOTATION, pac.getName()) + package_header + RDF_ANNOTATION_IMPORT);
 				// for(ClassEx clsEx : packex.getClassexes()) {
 				// StringBuffer buffer = new StringBuffer();
 				// buffer.append(package_header);

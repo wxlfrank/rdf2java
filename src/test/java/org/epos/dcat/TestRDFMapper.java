@@ -1,5 +1,7 @@
 package org.epos.dcat;
 
+import java.io.StringWriter;
+
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
@@ -35,14 +37,16 @@ public class TestRDFMapper {
 		return resource;
 	}
 
-//	@Test
-//	public void test() {
-//		RDFWriter mapper = new RDFWriter();
-//		// mapper.handleField(new Class());
-//		Document document = new Document();
-//		document.set_primaryTopic(new Thing());
-//		mapper.write(document).write(System.out);
-//	}
+	@Test
+	public void test() {
+		RDFWriter mapper = new RDFWriter();
+		// mapper.handleField(new Class());
+		Document document = new Document();
+		document.setPrimaryTopic(new Thing());
+		StringWriter result = new StringWriter();
+		mapper.write(document).write(result);
+		mapper.read(result.getBuffer().toString());
+	}
 
 	@Test
 	public void testFindRDFClass() {

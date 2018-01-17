@@ -1,5 +1,6 @@
 package org.epos.rdf;
 
+import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.epos.rdf.annotation.RDF;
 import org.epos.tranform.TransformUtils;
+import org.open.generate.RDFSUtils;
 
 public class RDFWriter {
 
@@ -25,7 +27,6 @@ public class RDFWriter {
 	private Map<Class<?>, Resource> class2rdfClass = new HashMap<Class<?>, Resource>();
 
 	private MapperConfig config = new MapperConfig();
-
 
 	private Map<Field, Property> field2rdfProperty = new HashMap<Field, Property>();
 
@@ -217,5 +218,32 @@ public class RDFWriter {
 			}
 		}
 		return fieldAccessor;
+	}
+
+	Map<String, Class<?>> uri2Class = new HashMap<String, Class<?>>();
+	public void read(String string) {
+		Model model = ModelFactory.createDefaultModel();
+		model.read(new StringReader(string), null);
+		model.listStatements().forEachRemaining(stm -> {
+			Resource source = stm.getSubject();
+			Resource type = RDFSUtils.getType(source);
+			Class<?> cls = getClassForURI(type.getURI());
+			String uri = type.getNameSpace();
+			Package pack = Package.getPackage(RDFSUtils.getPackageName(uri));
+			System.out.println(pack.getName());
+			try {
+				Class<?> cls = Class.forName(RDFSUtils.getPackageName(uri) + "." + type.getLocalName());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	private Class<?> getClassForURI(String ns, String local) {
+		Class<?> result = uri2Class.get(uri);
+		if(result != null)
+			return result;
+		result = Class.forName(RDFSUtils.getPackageName(uri) + "." + type.getLocalName());
+		return null;
 	}
 }

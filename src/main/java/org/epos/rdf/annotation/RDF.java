@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(value={ElementType.FIELD, ElementType.TYPE})
+@Target(value={ElementType.FIELD, ElementType.TYPE, ElementType.PACKAGE})
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface  RDF {
