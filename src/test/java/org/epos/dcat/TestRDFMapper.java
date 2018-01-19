@@ -1,5 +1,6 @@
 package org.epos.dcat;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.apache.jena.ontology.OntModel;
@@ -11,10 +12,9 @@ import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.epos.rdf.RDFWriter;
 import org.junit.Test;
-import org.open.generate.Class;
-import org.open.generate.Package;
+import org.open.rdf.RDFMapper;
+import org.open.rdfs.Class;
 import org.w3._2002_07_owl.Thing;
 
 import com.xmlns.foaf_0_1.Document;
@@ -39,18 +39,22 @@ public class TestRDFMapper {
 
 	@Test
 	public void test() {
-		RDFWriter mapper = new RDFWriter();
+		RDFMapper mapper = new RDFMapper();
 		// mapper.handleField(new Class());
 		Document document = new Document();
 		document.setPrimaryTopic(new Thing());
 		StringWriter result = new StringWriter();
 		mapper.write(document).write(result);
-		mapper.read(result.getBuffer().toString());
+		System.out.println(result.getBuffer().toString());
+		Model model = ModelFactory.createDefaultModel();
+		model.read(new StringReader(result.getBuffer().toString()), null);
+		Object read = mapper.read(model);
+		mapper.write(read).write(System.out);
 	}
 
 	@Test
 	public void testFindRDFClass() {
-		RDFWriter mapper = new RDFWriter();
+		RDFMapper mapper = new RDFMapper();
 		Model rdf_model = ModelFactory.createDefaultModel();
 		Resource resource = mapper.findRDFClass(rdf_model, Class.class);
 		System.out.println(resource.getURI());
