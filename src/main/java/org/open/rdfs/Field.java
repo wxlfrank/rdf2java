@@ -6,7 +6,7 @@ public class Field {
 
 	private Class container;
 
-	private int multiplicity;
+	private int multiplicity = 1;
 
 	private String name;
 

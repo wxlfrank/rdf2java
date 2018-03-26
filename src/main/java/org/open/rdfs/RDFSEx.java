@@ -12,7 +12,6 @@ public class RDFSEx extends Binding {
 
 	private RDFSExConfig config = new RDFSExConfig();
 
-
 	/**
 	 * create a transformation from RDFS/OWL to java classes from a set of local
 	 * RDFS/OWL files
@@ -45,13 +44,11 @@ public class RDFSEx extends Binding {
 			packEx.toFieldEx(property);
 		}
 		for (Resource shape : RDFSUtils.getNodeShapes(model)) {
-			System.out.println(shape.getURI());
 			Resource cls = RDFSUtils.getTargetClass(shape);
 			if (cls != null) {
 				ClassEx classEx = packEx.toClassEx(cls);
 				RDFSUtils.getShaclProperties(shape).forEach(property -> {
 					Resource path = RDFSUtils.getPath(property);
-					System.out.println(path.getURI());
 					FieldEx fieldEx = packEx.toFieldEx(path, classEx);
 					Resource kind = RDFSUtils.getNodeKind(property);
 					if (kind == null)
@@ -114,8 +111,7 @@ public class RDFSEx extends Binding {
 	/**
 	 * Returns the generated package for a given {@code namespace} <br>
 	 * 1. search for a generated package from the hash table for the generated
-	 * package {@link RDFSExConfig#getHash()} using the key
-	 * {@code namespace}<br>
+	 * package {@link RDFSExConfig#getHash()} using the key {@code namespace}<br>
 	 * 2. If a generated package is found, return the package <br>
 	 * 3. Otherwise, read the model corresponding to the {@code namespace}, hash the
 	 * new model and return the model
@@ -151,7 +147,6 @@ public class RDFSEx extends Binding {
 	public Collection<Binding> translate(RDFSFile local_file) {
 		readLocalFile(local_file, true);
 		return getPackageExes();
-		// generator.generate(Paths.get("src/main/java").toFile());
 	}
 
 	private void readLocalFile(RDFSFile local, boolean translate) {

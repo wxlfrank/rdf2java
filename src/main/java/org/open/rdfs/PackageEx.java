@@ -30,7 +30,7 @@ public class PackageEx extends Binding {
 		super(rdfs2java, model, result);
 	}
 
-	public ClassEx createClass(String local, Resource resource) {
+	public ClassEx createClassEx(String local, Resource resource) {
 		Class cls = new Class(getPackage(), local);
 		ClassEx result = new ClassEx(this, resource, cls);
 		return result;
@@ -118,7 +118,6 @@ public class PackageEx extends Binding {
 								List<Resource> union = RDFSUtils.getUnionOf(range);
 								if (union != null) {
 									for (Resource iter : union) {
-										System.out.println(RDFSUtils.getId(iter));
 										result.add(toClassEx(iter.getLocalName(), iter));
 									}
 								}
@@ -200,7 +199,7 @@ public class PackageEx extends Binding {
 		return toFieldEx(local, resource);
 	}
 
-	public FieldEx toFieldEx(Resource resource, ClassEx cls) {
+	protected FieldEx toFieldEx(Resource resource, ClassEx cls) {
 		Entry<PackageEx, Resource> real = getRealResource(resource);
 		PackageEx real_package = real.getKey();
 		String local = resource.getLocalName();
@@ -209,7 +208,7 @@ public class PackageEx extends Binding {
 		return toFieldEx(local, resource, cls);
 	}
 
-	private void fillClassEx(Resource domain, ClassEx cls) {
+	protected void fillClassEx(Resource domain, ClassEx cls) {
 		Model model = domain.getModel();
 		for (Resource property : RDFSUtils.getProperties(model)) {
 			Set<Resource> domains = RDFSUtils.getDomains(property);
@@ -273,7 +272,7 @@ public class PackageEx extends Binding {
 	private ClassEx toClassEx(String id, Resource resource) {
 		ClassEx type = getClassEx(id);
 		if (type == null) {
-			type = createClass(id, resource);
+			type = createClassEx(id, resource);
 			fillClassEx(resource, type);
 			type.setSuperClass(getSuperClass(resource));
 		}
@@ -288,7 +287,7 @@ public class PackageEx extends Binding {
 	 * @param packEx
 	 * @return transformed fields
 	 */
-	private Set<FieldEx> toFieldEx(String local, Resource resource) {
+	protected Set<FieldEx> toFieldEx(String local, Resource resource) {
 		// find the domains of the property
 		Set<ClassEx> domains = getDomains(resource);
 		if (domains == null)

@@ -5,7 +5,9 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.jena.ontology.OntModel;
@@ -13,8 +15,10 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.junit.Assert;
 import org.junit.Test;
 import org.open.Configuration;
+import org.open.rdfs.Binding;
 import org.open.rdfs.PackageEx;
 import org.open.rdfs.RDFSFile;
 import org.open.rdfs.RDFSEx;
@@ -51,7 +55,26 @@ public class TestOWL {
 		RDFSEx transform = new RDFSEx(files);
 		RDFSFile main = new RDFSFile(Paths.get("epos-dcat-ap_shapes.ttl").toUri().toURL().toString(), "TURTLE");
 		JavaGenerator generator = new JavaGenerator(new JavaGenerateConfig());
-		generator.generate(Paths.get("src/main/java").toFile(), transform.translate(main));
+		Collection<Binding> result = transform.translate(main);
+		checkResult(result);
+		generator.generate(Paths.get("src/main/java").toFile(), result);
+	}
+
+	private void checkResult(Collection<Binding> result) {
+
+		String uri = "http://www.epos-eu.org/epos/dcat-ap#";
+		PackageEx epos_ap = null;
+		for (Binding bind : result) {
+			Assert.assertTrue(bind instanceof PackageEx);
+			if(((PackageEx)bind).getPackage().getName().equals(uri))
+				epos_ap = (PackageEx) bind;
+		}
+		Assert.assertNotNull(epos_ap);
+		Map<String, Binding> child = epos_ap.getChildren();
+		String[] Classes = {"Equipment"};
+		for(String cls : Classes) {
+			Assert.assertNotNull(child.get(cls));
+		}
 	}
 
 	@Test
