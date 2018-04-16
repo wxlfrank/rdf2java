@@ -1,6 +1,6 @@
 package org.open.rdfs.java;
 
-import org.open.Configuration;
+import org.open.rdf.Configuration;
 
 public class JavaGenerateConfig extends Configuration{
 	public String getFieldName(String local) {

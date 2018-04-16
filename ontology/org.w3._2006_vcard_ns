@@ -421,6 +421,12 @@
         rdfs:subClassOf   :Type ;
         owl:deprecated    true .
 
+:hasTelephone  a                owl:ObjectProperty ;
+        rdfs:comment            "To specify the telephone number for telephony communication with the object"@en ;
+        rdfs:isDefinedBy        <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label              "has telephone"@en ;
+        owl:equivalentProperty  :tel .
+
 :Text   a                 owl:Class ;
         rdfs:comment      "Also called sms telephone"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -445,12 +451,6 @@
                                                      ]
                                                    )
                              ] .
-
-:hasTelephone  a                owl:ObjectProperty ;
-        rdfs:comment            "To specify the telephone number for telephony communication with the object"@en ;
-        rdfs:isDefinedBy        <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label              "has telephone"@en ;
-        owl:equivalentProperty  :tel .
 
 :hasOrganizationName  a   owl:ObjectProperty ;
         rdfs:comment      "Used to support property parameters for the organization name data property"@en ;
@@ -670,11 +670,6 @@
         rdfs:label        "Tel"@en ;
         owl:deprecated    true .
 
-:hasAdditionalName  a     owl:ObjectProperty ;
-        rdfs:comment      "Used to support property parameters for the additional name data property"@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "has additional name"@en .
-
 :hasNote  a               owl:ObjectProperty ;
         rdfs:comment      "Used to support property parameters for the note data property"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -686,6 +681,11 @@
         rdfs:label        "Individual"@en ;
         rdfs:subClassOf   :Kind ;
         owl:disjointWith  :Organization , :Location .
+
+:hasAdditionalName  a     owl:ObjectProperty ;
+        rdfs:comment      "Used to support property parameters for the additional name data property"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "has additional name"@en .
 
 :Unknown  a               owl:Class ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;

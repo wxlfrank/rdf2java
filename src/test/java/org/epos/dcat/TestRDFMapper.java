@@ -2,6 +2,12 @@ package org.epos.dcat;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -12,12 +18,12 @@ import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.junit.Assert;
 import org.junit.Test;
 import org.open.rdf.RDFMapper;
-import org.open.rdfs.Class;
-import org.w3._2002_07_owl.Thing;
-
-import com.xmlns.foaf_0_1.Document;
+import org.schema.ContactPoint;
+import org.w3._2001_XMLSchema.Date;
+import org.w3.ns_dcat.Dataset;
 
 public class TestRDFMapper {
 
@@ -37,34 +43,49 @@ public class TestRDFMapper {
 		return resource;
 	}
 
-	@Test
-	public void test() {
-		RDFMapper mapper = new RDFMapper();
-		// mapper.handleField(new Class());
-		Document document = new Document();
-		document.setPrimaryTopic(new Thing());
-		StringWriter result = new StringWriter();
-		mapper.write(document).write(result);
-		System.out.println(result.getBuffer().toString());
-		Model model = ModelFactory.createDefaultModel();
-		model.read(new StringReader(result.getBuffer().toString()), null);
-		Object read = mapper.read(model);
-		mapper.write(read).write(System.out);
+	public static XMLGregorianCalendar toXMLGregorianCalendar(java.util.Date date) {
+		GregorianCalendar gCalendar = new GregorianCalendar();
+		gCalendar.setTime(date);
+		XMLGregorianCalendar xmlCalendar = null;
+		try {
+			xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(gCalendar);
+		} catch (DatatypeConfigurationException ex) {
+		}
+		return xmlCalendar;
 	}
 
 	@Test
-	public void testFindRDFClass() {
+	public void test() {
 		RDFMapper mapper = new RDFMapper();
-		Model rdf_model = ModelFactory.createDefaultModel();
-		Resource resource = mapper.findRDFClass(rdf_model, Class.class);
-		System.out.println(resource.getURI());
-		// mapper.handleField(new Class());
-		// mapper.toRDF(new Class(new Package("temp"), "class")).write(System.out);
+		Dataset dataset = new Dataset();
+		dataset.setIdentifier(new org.w3._2001_XMLSchema.String("identifier"));
+		try {
+			dataset.setModified(new Date(DatatypeFactory.newInstance()
+					.newXMLGregorianCalendar(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()))));
+		} catch (DatatypeConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ContactPoint cp = new ContactPoint();
+		cp.setTelephone(new org.w3._2001_XMLSchema.String("45029792"));
+		dataset.getContactPoint().add(cp);
+		StringWriter result = new StringWriter();
+		mapper.write(dataset).write(result, "TURTLE");
+		String write = result.getBuffer().toString();
+		System.out.println(write);
+		Model model = ModelFactory.createDefaultModel();
+		model.read(new StringReader(result.getBuffer().toString()), null, "TURTLE");
+		Object javaObject = mapper.read(model);
+		result = new StringWriter();
+		mapper.write(javaObject).write(result, "TURTLE");
+		String read = result.getBuffer().toString();
+		Assert.assertTrue(write.equals(read));
 	}
 
 	@Test
 	public void testRDFModel() {
 		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+		model.read("epos-dcat-ap_shapes.ttl", "TURTLE");
 		model.setNsPrefix("dc", DC.NS);
 		model.setNsPrefix("", RDFS.uri);
 		Resource onto = model.createResource(RDFS.uri);

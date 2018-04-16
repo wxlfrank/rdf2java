@@ -1,4 +1,4 @@
-package org.open.rdfs;
+package org.open.structure;
 
 public abstract class Type {
 	protected Package container;
@@ -21,5 +21,15 @@ public abstract class Type {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String toString() {
+		return (container != null ? container.getName() : "") + name;
+	}
+
+	public boolean isTypeOf(Type baseType) {
+		if (baseType == this)
+			return true;
+		return false;
 	}
 }

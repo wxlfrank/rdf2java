@@ -1,20 +1,30 @@
 package org.open.rdfs.java;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.open.rdfs.Type;
+import org.open.structure.Package;
+import org.open.structure.Type;
 
 public class JavaType extends Type {
 
-	public static final JavaType LIST = new JavaType(List.class.getName());
-	public static final JavaType ARRAYLIST = new JavaType(ArrayList.class.getName());
+	private static final Map<String, Package> JAVA_PACKAGES = new HashMap<String, Package>();
+	public static final JavaType LIST = new JavaType(List.class);
+	public static final JavaType ARRAYLIST = new JavaType(ArrayList.class);
 
-	public JavaType(String fullname) {
-		this.setContainer(null);
-		this.setName(fullname);
+	public JavaType(Class<?> clazz) {
+		this.setContainer(getJavaPackage(clazz.getPackage().getName()));
+		this.setName(clazz.getSimpleName());
 	}
-	public static void main(String[] args){
-		System.out.println(LIST.getName());
+
+	private Package getJavaPackage(String name) {
+		Package result = JAVA_PACKAGES.get(name);
+		if (result == null) {
+			result = new Package(name);
+			JAVA_PACKAGES.put(name, result);
+		}
+		return result;
 	}
 }

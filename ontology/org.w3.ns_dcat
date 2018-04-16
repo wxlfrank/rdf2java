@@ -120,30 +120,30 @@ dcat:WebService  a        owl:Class , rdfs:Class ;
                                                ] ;
                            foaf:name           "Vassilios Peristeras"
                          ] ;
-        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
-        dct:contributor  [ rdfs:seeAlso   <http://makxdekkers.com/makxdekkers.rdf#me> ;
-                           foaf:homepage  <http://makxdekkers.com/> ;
-                           foaf:name      "Makx Dekkers"
-                         ] ;
         dct:contributor  [ foaf:name  "Richard Cyganiak" ] ;
-        dct:contributor  [ foaf:name  "Martin Alvarez-Espinar" ] ;
-        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
-                           foaf:name      "Shuji Kamitsuna"
+        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
+                           foaf:name     "Ghislain Auguste Atemezing"
                          ] ;
         dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://okfn.org> ;
                                                  foaf:name      "Open Knowledge Foundation"
                                                ] ;
                            foaf:name           "Rufus Pollock"
                          ] ;
-        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
-                           foaf:name     "Ghislain Auguste Atemezing"
-                         ] ;
+        dct:contributor  [ foaf:name  "Boris Villazón-Terrazas" ] ;
+        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
         dct:contributor  [ rdfs:seeAlso        <http://philarcher.org/foaf.rdf#me> ;
                            schema:affiliation  <http://www.w3.org/data#W3C> ;
                            foaf:homepage       <http://www.w3.org/People/all#phila> ;
                            foaf:name           "Phil Archer"
                          ] ;
-        dct:contributor  [ foaf:name  "Boris Villazón-Terrazas" ] ;
+        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
+                           foaf:name      "Shuji Kamitsuna"
+                         ] ;
+        dct:contributor  [ rdfs:seeAlso   <http://makxdekkers.com/makxdekkers.rdf#me> ;
+                           foaf:homepage  <http://makxdekkers.com/> ;
+                           foaf:name      "Makx Dekkers"
+                         ] ;
+        dct:contributor  [ foaf:name  "Martin Alvarez-Espinar" ] ;
         dct:creator      [ rdfs:seeAlso  <http://fadmaa.me/foaf.ttl> ;
                            foaf:name     "Fadi Maali"
                          ] ;

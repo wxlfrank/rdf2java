@@ -1,6 +1,6 @@
-package org.open.rdfs;
+package org.open.structure;
 
-public class Interface extends Type {
+public class Interface extends Inheritable {
 
 	private final static String FORMAT = "public interface %s{%n}%n";
 

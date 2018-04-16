@@ -1,0 +1,118 @@
+@prefix :      <http://www.w3.org/2011/content#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix cnt:   <http://www.w3.org/2011/content#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+cnt:internalSubset  a  owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The internal document type definition subset within the document type declarations."@en ;
+        rdfs:domain   cnt:DoctypeDecl ;
+        rdfs:label    "Internal DTD subset"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:bytes  a          owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The Base64 encoded byte sequence of the content."@en ;
+        rdfs:domain   cnt:ContentAsBase64 ;
+        rdfs:label    "Base64 encoded byte sequence"@en ;
+        rdfs:range    xsd:base64Binary .
+
+cnt:ContentAsBase64  a   owl:Class , rdfs:Class ;
+        rdfs:comment     "The base64 encoded content (can be used for binary content)."@en ;
+        rdfs:label       "Base64 content"@en ;
+        rdfs:subClassOf  cnt:Content .
+
+cnt:dtDecl  a         owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The document type declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "Document type declaration"@en ;
+        rdfs:range    cnt:DoctypeDecl .
+
+cnt:leadingMisc  a    owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The XML content preceding the document type declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "XML leading misc"@en ;
+        rdfs:range    rdfs:XMLLiteral .
+
+cnt:version  a        owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The XML version declared in the XML declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "XML version"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:systemId  a       owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The document type declarations's system identifier (typed: xsd:anyURI)"@en ;
+        rdfs:domain   cnt:DoctypeDecl ;
+        rdfs:label    "System ID"@en ;
+        rdfs:range    xsd:anyURI .
+
+<http://www.w3.org/2011/content>
+        a                 owl:Ontology ;
+        rdfs:comment      "Representing Content in RDF as defined by http://www.w3.org/TR/Content-in-RDF/"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/TR/Content-in-RDF/> ;
+        rdfs:label        "Representing Content in RDF"@en ;
+        rdfs:seeAlso      <http://www.w3.org/WAI/intro/earl> ;
+        owl:imports       dct: ;
+        owl:versionInfo   "Working Draft 29 April 2011"@en .
+
+cnt:ContentAsText  a     owl:Class , rdfs:Class ;
+        rdfs:comment     "The text content (can be used for text content)."@en ;
+        rdfs:label       "Text content"@en ;
+        rdfs:subClassOf  cnt:Content .
+
+cnt:chars  a          owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The character sequence of the text content."@en ;
+        rdfs:domain   cnt:ContentAsText ;
+        rdfs:label    "Character sequence"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:doctypeName  a    owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The document type name."@en ;
+        rdfs:domain   cnt:DoctypeDecl ;
+        rdfs:label    "Document type name"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:Content  a        owl:Class , rdfs:Class ;
+        rdfs:comment  "The content."@en ;
+        rdfs:label    "Content"@en .
+
+cnt:rest  a           owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The XML content following the document type declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "XML rest"@en ;
+        rdfs:range    rdfs:XMLLiteral .
+
+cnt:ContentAsXML  a      owl:Class , rdfs:Class ;
+        rdfs:comment     "The XML content (can only be used for XML-wellformed content)."@en ;
+        rdfs:label       "XML content"@en ;
+        rdfs:subClassOf  cnt:Content .
+
+cnt:standalone  a     owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The standalone declaration in the XML declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "XML standalone document declaration"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:declaredEncoding  a  owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The character encoding declared in the XML declaration."@en ;
+        rdfs:domain   cnt:ContentAsXML ;
+        rdfs:label    "XML character encoding"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:characterEncoding
+        a             owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The character encoding used to create a character sequence from a byte sequence or vice versa."@en ;
+        rdfs:domain   cnt:Content ;
+        rdfs:label    "Character encoding"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:publicId  a       owl:ObjectProperty , rdf:Property ;
+        rdfs:comment  "The document type declarations's public identifier."@en ;
+        rdfs:domain   cnt:DoctypeDecl ;
+        rdfs:label    "Public ID"@en ;
+        rdfs:range    rdfs:Literal .
+
+cnt:DoctypeDecl  a    owl:Class , rdfs:Class ;
+        rdfs:comment  "The document type declaration."@en ;
+        rdfs:label    "Document type declaration"@en .

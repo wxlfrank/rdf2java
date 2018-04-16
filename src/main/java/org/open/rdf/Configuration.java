@@ -1,4 +1,4 @@
-package org.open;
+package org.open.rdf;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,12 +12,15 @@ public class Configuration {
 	public String getPackageName(String ns) {
 		if (ns.isEmpty())
 			return ns;
+
 		String result = uri2pac.get(ns);
 		if (result != null)
 			return result;
 		int index = ns.indexOf("//");
+		boolean isPackage = index == -1;
 		String newNS = index == -1 ? ns : ns.substring(index + 2);
 		index = newNS.indexOf("www.");
+		isPackage = isPackage && index == -1;
 		newNS = index == -1 ? newNS : newNS.substring(index + 4);
 		newNS = newNS.replaceAll("-", "_").replaceAll("#", "");
 		String domain = null, last = null;
@@ -25,12 +28,15 @@ public class Configuration {
 		if (index == -1) {
 			domain = newNS;
 		} else {
+			isPackage = false;
 			domain = newNS.substring(0, index);
 			last = newNS.substring(index + 1);
 		}
-		List<String> domains = Arrays.asList(domain.split("\\."));
-		Collections.reverse(domains);
-		domain = String.join(".", domains);
+		if (!isPackage) {
+			List<String> domains = Arrays.asList(domain.split("\\."));
+			Collections.reverse(domains);
+			domain = String.join(".", domains);
+		}
 		if (last != null) {
 			if (last.endsWith("/"))
 				last = last.substring(0, last.length() - 1);

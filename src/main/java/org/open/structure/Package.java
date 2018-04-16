@@ -1,4 +1,4 @@
-package org.open.rdfs;
+package org.open.structure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ public class Package {
 
 	private List<Class> classes;
 	private List<DataType> datatypes;
-	private List<Interface> intfc;
+	private List<Interface> interfaces;
 
 	private String name = null;
 
@@ -21,7 +21,7 @@ public class Package {
 	}
 
 	public void addInterface(Interface interface1) {
-		getInterface().add(interface1);
+		getInterfaces().add(interface1);
 	}
 
 	public List<Class> getClasses() {
@@ -37,10 +37,10 @@ public class Package {
 		return datatypes;
 	}
 
-	public List<Interface> getInterface() {
-		if(intfc == null)
-			intfc = new ArrayList<Interface>();
-		return intfc;
+	public List<Interface> getInterfaces() {
+		if(interfaces == null)
+			interfaces = new ArrayList<Interface>();
+		return interfaces;
 	}
 
 	public String getName() {
@@ -48,7 +48,7 @@ public class Package {
 	}
 
 	public boolean isEmpty() {
-		return getInterface().isEmpty();
+		return getClasses().isEmpty() && getInterfaces().isEmpty();
 	}
 
 	public void setDatatypes(List<DataType> datatypes) {
@@ -57,5 +57,9 @@ public class Package {
 
 	public void setName(String uri) {
 		name = uri;
+	}
+	
+	public String toString() {
+		return name;
 	}
 }

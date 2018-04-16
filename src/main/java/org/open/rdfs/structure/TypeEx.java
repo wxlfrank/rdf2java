@@ -1,7 +1,8 @@
-package org.open.rdfs;
+package org.open.rdfs.structure;
 
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.open.structure.Type;
 
 public abstract class TypeEx extends Binding {
 
