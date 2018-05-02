@@ -50,6 +50,8 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	private Map<Model, Set<Resource>> model2properties = new HashMap<Model, Set<Resource>>();
 
 	private Map<Resource, Set<Resource>> shaclProperties = new HashMap<Resource, Set<Resource>>();
+//	private Map<Resource, Set<Resource>> class2classes = new HashMap<Resource, Set<Resource>>();
+	private Map<Resource, Set<Resource>> property2properties = new HashMap<Resource, Set<Resource>>();
 
 	private Map<Resource, Set<Resource>> shape2classes = new HashMap<Resource, Set<Resource>>();
 	private Map<Resource, Set<Resource>> class2shapes = new HashMap<Resource, Set<Resource>>();
@@ -59,11 +61,11 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	private Set<Resource> shapeHandled = new LinkedHashSet<Resource>();
 
 	public Set<Resource> getClasses(Model model) {
-		return Util.getFromCache(model, model2classes);
+		return Util.getFromCache(model2classes, model);
 	}
 
 	public Set<Resource> getClassesOfShape(Resource source) {
-		return Util.getFromCache(source, shape2classes);
+		return Util.getFromCache(shape2classes, source);
 	}
 
 	public Set<Resource> getDomainsOfProperty(Resource property) {
@@ -86,19 +88,19 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	}
 
 	public Set<Resource> getNodeShapes(Model model) {
-		return Util.getFromCache(model, model2shapes);
+		return Util.getFromCache(model2shapes, model);
 	}
 
 	public Set<Resource> getOntology(Model model) {
-		return Util.getFromCache(model, model2schemas);
+		return Util.getFromCache(model2schemas, model);
 	}
 
 	public Set<Resource> getProperties(Model model) {
-		return Util.getFromCache(model, model2properties);
+		return Util.getFromCache(model2properties, model);
 	}
 
 	public Set<Resource> getPropertiesOfDomain(Resource domain) {
-		return Util.getFromCache(domain, domain2properties);
+		return Util.getFromCache(domain2properties, domain);
 	}
 
 	public Set<Resource> getRangesOfProperty(Resource resource) {
@@ -224,6 +226,12 @@ public class RDFSUtilWithCache extends RDFSUtil {
 						Util.putIntoCache(shape2classes, shape, targetClass);
 					}
 				}
+				// else if(uri.equals(OWL.equivalentClass.getURI())) {
+				// Util.putIntoCache(class2classes, subject, (Resource)object);
+				// }
+				// else if(uri.equals(OWL.equivalentProperty.getURI())) {
+				// Util.putIntoCache(property2properties, subject, (Resource)object);
+				// }
 			}
 		});
 		getProperties(model).forEach(property -> {
@@ -239,12 +247,22 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	}
 
 	private Map<Resource, Set<ClassEx>> nodeshape2classes = new HashMap<Resource, Set<ClassEx>>();
+
 	public Set<ClassEx> getShapeTypes(Resource shape) {
 		return nodeshape2classes.get(shape);
 	}
 
 	public void setShapeTypes(Resource shape, Set<ClassEx> classes) {
 		nodeshape2classes.put(shape, classes);
+	}
+
+	public Set<Resource> getEquivalences(Resource rdfsProperty) {
+		Set<Resource> value = property2properties.get(rdfsProperty);
+		if (value == null) {
+			value = RDFSUtil.getProperties(rdfsProperty, OWL.equivalentProperty);
+			property2properties.put(rdfsProperty, value);
+		}
+		return value;
 	}
 
 }

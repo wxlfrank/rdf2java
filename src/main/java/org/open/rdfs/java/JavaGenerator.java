@@ -11,8 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.rdf.model.Resource;
 import org.open.Util;
+import org.open.rdfs.RDFSUtil;
 import org.open.rdfs.structure.Binding;
+import org.open.rdfs.structure.ClassEx;
+import org.open.rdfs.structure.FieldEx;
 import org.open.rdfs.structure.PackageEx;
 import org.open.structure.Class;
 import org.open.structure.Field;
@@ -37,15 +41,13 @@ public class JavaGenerator {
 
 	private static final String RDFLITERAL_FIELD = "\tprivate Object value;%n\tpublic %1$s(Object value) {%n\t\tthis.value = value;%n\t}%n\tpublic java.lang.String toString() {%n\t\treturn value != null ? value.toString() : \"null\";%n\t}%n";
 
+	private static final String FIELD_RDF_ANNOTATION = "\t@RDF(namespace = \"%1$s\", local = \"%2$s\")%n";
 	private static final String FIELD_DECLARE = "\tprivate %1$s %2$s;%n";
-	private static final String FIELD_GETTER = "\tpublic %1$s get%3$s() {%n" + "\t\treturn %2$s;%n" + "\t}%n";
-	private static final String FIELD_RDF_ANNOTATION = "\t@RDF(namespace = \"%4$s\", local = \"%5$s\")%n";
-	private static final String FIELD_SETTER = "\tpublic void set%3$s(%1$s %2$s) {%n" + "\t\tthis.%2$s = %2$s;%n"
-			+ "\t}%n";
-	private static final String FIELD_FORMAT = FIELD_RDF_ANNOTATION + FIELD_DECLARE + FIELD_GETTER + FIELD_SETTER;
-	private static final String COLLECTION_FIELD_FORMAT = FIELD_RDF_ANNOTATION + "\tprivate %6$s<%1$s> %2$s;%n"
-			+ "\tpublic %6$s<%1$s> get%3$s() {%n" + "\t\tif(%2$s == null) {%n" + "\t\t\t%2$s = new ArrayList<%1$s>();%n"
-			+ "\t\t}%n" + "\t\treturn %2$s;%n" + "\t}%n";
+	private static final String FIELD_GETTER_CONTENT = "\t\treturn %1$s;%n";
+	private static final String FIELD_GETTER = "\tpublic %1$s get%2$s() {%n%3$s\t}%n";
+	private static final String FIELD_SETTER = "\tpublic void set%1$s(%2$s %3$s) {%n\t\tthis.%3$s = %3$s;%n" + "\t}%n";
+	private static final String COLLECTION_TYPE = "%1$s<%2$s>";
+	private static final String COLLECTION_FIELD_GETTER_CONTENT = "\t\tif(%1$s == null) {%n\t\t\t%1$s = new ArrayList<%2$s>();%n\t\t}%n\t\treturn %1$s;%n";
 
 	private static final String IMPORT_FORMAT = "import %s;%n";
 	private static final String JAVA_FILE_FORMAT = "%s.java";
@@ -84,8 +86,8 @@ public class JavaGenerator {
 			buffer.append(packageStatement);
 			write2File(pac_dir, String.format(JAVA_FILE_FORMAT, intf.getName()), buffer.toString() + intf.toString());
 		}
-		for (Class cls : pac.getClasses()) {
-			visit(cls, pac_dir, packageStatement);
+		for (Binding cls : packex.getClassexes()) {
+			visit((ClassEx) cls, pac_dir, packageStatement);
 		}
 
 	}
@@ -97,17 +99,19 @@ public class JavaGenerator {
 	 * @param dir
 	 * @param package_header
 	 */
-	protected void visit(Class cls, File dir, String package_header) {
+	protected void visit(ClassEx clsEx, File dir, String package_header) {
 		StringBuffer classBuffer = new StringBuffer();
 		classBuffer.append(package_header);
+		Class cls = clsEx.getClazz();
 		Map<String, Set<Type>> dependentTypes = getDependentTypes(cls);
 		List<Type> importedTypes = getImportedTypes(cls, dependentTypes);
 		importedTypes.forEach(importType -> {
 			classBuffer.append(addImport(importType));
 		});
-		classBuffer.append(cls.getContainer().getName().equals(Constants.XMLSchema_URI) ? RDFLITERAL_ANNOTATION_IMPORT : RDF_ANNOTATION_IMPORT);
+		classBuffer.append(cls.getContainer().getName().equals(Constants.XMLSchema_URI) ? RDFLITERAL_ANNOTATION_IMPORT
+				: RDF_ANNOTATION_IMPORT);
 		Map<Type, String> local_type_dic = getLocalTypeName(cls, importedTypes, dependentTypes);
-		visit(cls, classBuffer, local_type_dic);
+		visit(clsEx, classBuffer, local_type_dic);
 		write2File(dir, String.format(JAVA_FILE_FORMAT, JavaUtil.captializeFirstChar(cls.getName())),
 				classBuffer.toString());
 	}
@@ -302,29 +306,40 @@ public class JavaGenerator {
 	 *            the hash table that maps the type of a field to its generated name
 	 * @return
 	 */
-	protected void visit(Class cls, StringBuffer classBuffer, Map<Type, String> type2name) {
+	protected void visit(ClassEx clsEx, StringBuffer buffer, Map<Type, String> type2name) {
+		Class cls = clsEx.getClazz();
 		boolean isXMLLiteral = cls.getContainer().getName().equals(Constants.XMLSchema_URI);
-		classBuffer.append(String.format(isXMLLiteral ? CLASS_RDFLITERAL_ANNOTATION : CLASS_RDF_ANNOTATION,
+		buffer.append(String.format(isXMLLiteral ? CLASS_RDFLITERAL_ANNOTATION : CLASS_RDF_ANNOTATION,
 				cls.getContainer().getName(), cls.getName()));
-		classBuffer.append(String.format(CLASS_HEADER, JavaUtil.captializeFirstChar(cls.getName())));
+		for (Binding iter : clsEx.getEquivalence()) {
+			if (iter instanceof ClassEx) {
+				Class equal = ((ClassEx) iter).getClazz();
+				String namespace = equal.getContainer().getName();
+				String local = equal.getName();
+				buffer.append(String.format(
+						namespace.equals(Constants.XMLSchema_URI) ? CLASS_RDFLITERAL_ANNOTATION : CLASS_RDF_ANNOTATION,
+						namespace, local));
+			}
+		}
+		buffer.append(String.format(CLASS_HEADER, JavaUtil.captializeFirstChar(cls.getName())));
 		List<String> parents = new ArrayList<String>();
 		for (Class superClass : cls.getParents())
 			parents.add(type2name.get(superClass));
 		if (!parents.isEmpty()) {
-			classBuffer.append(String.format(CLASS_EXTENDS, String.join(", ", parents)));
+			buffer.append(String.format(CLASS_EXTENDS, String.join(", ", parents)));
 		}
 		List<String> intfcs = new ArrayList<String>();
 		cls.getInterfaces().forEach(intfc -> intfcs.add(type2name.get(intfc)));
 		if (!intfcs.isEmpty())
-			classBuffer.append(String.format(CLASS_IMPLEMENTS, String.join(", ", intfcs)));
-		classBuffer.append(CLASS_START_BRACKET);
+			buffer.append(String.format(CLASS_IMPLEMENTS, String.join(", ", intfcs)));
+		buffer.append(CLASS_START_BRACKET);
 		if (isXMLLiteral) {
-			classBuffer.append(String.format(RDFLITERAL_FIELD, JavaUtil.captializeFirstChar(cls.getName())));
+			buffer.append(String.format(RDFLITERAL_FIELD, JavaUtil.captializeFirstChar(cls.getName())));
 		}
-		for (Field field : cls.getFields()) {
-			visit(field, classBuffer, type2name);
+		for (Binding field : clsEx.getFields()) {
+			visit((FieldEx) field, buffer, type2name);
 		}
-		classBuffer.append(CLASS_END_BRACKET);
+		buffer.append(CLASS_END_BRACKET);
 	}
 
 	/**
@@ -337,35 +352,40 @@ public class JavaGenerator {
 	 *            the java field
 	 * @return the string representing the field
 	 */
-	private void visit(Field field, StringBuffer classBuffer, Map<Type, String> type2name) {
+	private void visit(FieldEx fieldEx, StringBuffer buffer, Map<Type, String> type2name) {
+		Field field = fieldEx.getField();
 		List<String> types = new ArrayList<String>();
 		for (Type type : field.getTypes()) {
 			types.add(type == null ? null : type2name.get(type));
 		}
 		if (types.isEmpty())
 			types.add("String");
-		String name = config.getFieldName(field.getName());
-		Package pack = field.getContainer().getContainer();
-		classBuffer.append(toJavaField(field.getMax() > 1 ? COLLECTION_FIELD_FORMAT : FIELD_FORMAT,
-				String.join(", ", types), name, JavaUtil.captializeFirstChar(name), pack.getName(), field.getName(),
-				type2name.get(JavaType.LIST)));
+		String local = field.getName();
+		String field_name = config.getFieldName(field.getName());
+		// write in RDF annotations
+		String namespace = RDFSUtil.unifyNS(((Resource) fieldEx.getSource()).getNameSpace());
+		buffer.append(String.format(FIELD_RDF_ANNOTATION, namespace, local));
+		for (Binding iter : fieldEx.getEquivalence()) {
+			if (iter instanceof FieldEx) {
+				FieldEx cur = (FieldEx) iter;
+				buffer.append(String.format(FIELD_RDF_ANNOTATION,
+						RDFSUtil.unifyNS(((Resource) cur.getSource()).getNameSpace()), cur.getField().getName()));
+			}
+		}
+		String field_type = String.join(", ", types);
+		String method_name = JavaUtil.captializeFirstChar(field_name);
+		boolean isMultiple = field.getMax() > 1;
+		if (isMultiple) {
+			field_type = String.format(COLLECTION_TYPE, type2name.get(JavaType.LIST), field_type);
+		}
+		// write in field declaration
+		buffer.append(String.format(FIELD_DECLARE, field_type, field_name));
+		// write in field getter method
+		buffer.append(String.format(FIELD_GETTER, field_type, method_name,
+				isMultiple ? String.format(COLLECTION_FIELD_GETTER_CONTENT, field_name, String.join(", ", types))
+						: String.format(FIELD_GETTER_CONTENT, field_name)));
+		if (!isMultiple)
+			buffer.append(String.format(FIELD_SETTER, method_name, field_type, field_name));
 
 	}
-
-	/**
-	 * generate java field definition
-	 * 
-	 * @param format
-	 * @param type
-	 * @param fieldName
-	 * @param methodName
-	 * @param rdfPackage
-	 * @param rdfPart
-	 * @return
-	 */
-	private String toJavaField(String format, String type, String fieldName, String methodName, String rdfPackage,
-			String rdfPart, String javaList) {
-		return String.format(format, type, fieldName, methodName, rdfPackage, rdfPart, javaList);
-	}
-
 }

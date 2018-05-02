@@ -85,6 +85,7 @@ epos:Facility
   rdfs:comment "A resource representing a Facility. E.g. seismic station"@en  ;
   rdfs:isDefinedBy <http://www.epos-eu.org/epos/dcat-ap> ;
   rdfs:label "Facility"@en  ;
+  rdfs:subClassOf rdfs:Resource ;
 .
 
 ##redefining schema:Organization and schema:Person
@@ -137,6 +138,7 @@ dcat:keyword owl:equivalentProperty schema:keywords .
 ##We extend range and domain of dcat:contactPoint
 dcat:contactPoint
   rdf:type owl:ObjectProperty ;
+  rdfs:domain dcat:Dataset ;  
   rdfs:domain schema:Organization ;
   rdfs:domain schema:Person ;
   rdfs:domain epos:Equipment ;

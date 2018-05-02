@@ -17,7 +17,7 @@ public class FieldEx extends Binding {
 	private Set<TypeEx> types = null;
 
 	public FieldEx(ClassEx parent, String name, Resource source) {
-		super(parent, source, new Field(parent.getClazz(), name));
+		super(parent, source, new Field(parent == null ? null : parent.getClazz(), name));
 	}
 
 	public ClassEx getClassEx() {
@@ -43,19 +43,21 @@ public class FieldEx extends Binding {
 		this.types = typeEx;
 	}
 
-//	public void setType(ClassEx type) {
-//		if (type != null) {
-//			Set<TypeEx> types = getTypes();
-//			if (!types.isEmpty())
-//				types.clear();
-//			types.add(type);
-//			getField().setType(type.get_Class());
-//		}
-//	}
-	
+	// public void setType(ClassEx type) {
+	// if (type != null) {
+	// Set<TypeEx> types = getTypes();
+	// if (!types.isEmpty())
+	// types.clear();
+	// types.add(type);
+	// getField().setType(type.get_Class());
+	// }
+	// }
+
 	public void addType(TypeEx type) {
 		getTypes().add(type);
 		getField().getTypes().add(type.getType());
 	}
+
+	
 
 }

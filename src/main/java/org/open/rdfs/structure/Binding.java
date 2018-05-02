@@ -1,20 +1,27 @@
 package org.open.rdfs.structure;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Binding {
 
-	private Map<String, ? extends Binding> contents = new HashMap<String, Binding>();
+	protected Map<String, ? extends Binding> contents = new HashMap<String, Binding>();
 	protected Binding container;
 	protected Object source;
 	protected Object target;
 
-	public Binding() {}
+	protected Set<Binding> equivalence = null;
+
+	public Binding() {
+	}
+
 	public Binding(Binding parent, Object source, Object target) {
 		this.source = source;
 		this.target = target;
-		this.setContainer(parent);
+		if (parent != null)
+			this.setContainer(parent);
 	}
 
 	public void addContent(Binding content) {
@@ -57,6 +64,27 @@ public abstract class Binding {
 
 	public void setTarget(Object target) {
 		this.target = target;
+	}
+
+	public Set<Binding> getEquivalence() {
+		if (equivalence == null) {
+			equivalence = new LinkedHashSet<Binding>();
+		}
+		return equivalence;
+	}
+
+	public void addEquivalence(Set<? extends Binding> fieldEx) {
+		Set<Binding> equivalence = getEquivalence();
+		for (Binding iter : fieldEx) {
+			equivalence.add(iter);
+			iter.getEquivalence().add(this);
+		}
+	}
+
+	public void addEquivalence(Binding fieldEx) {
+		Set<Binding> equivalence = getEquivalence();
+		equivalence.add(fieldEx);
+		fieldEx.getEquivalence().add(this);
 	}
 
 }

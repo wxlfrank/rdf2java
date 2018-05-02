@@ -1,7 +1,9 @@
 package org.open;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +18,7 @@ public class Util {
 		return result;
 	}
 
-	public static <T, U> Set<U> getFromCache(T entity, Map<T, Set<U>> map) {
+	public static <T, U> Set<U> getFromCache(Map<T, Set<U>> map, T entity) {
 		Set<U> result = map.get(entity);
 		if (result != null)
 			return result;
@@ -41,5 +43,19 @@ public class Util {
 			maps.put(key1, firstValue);
 		}
 		firstValue.put(key2, value);
+	}
+	private static Set<String> warnings = new LinkedHashSet<String>();
+
+	public static boolean addWarning(String string) {
+		if (warnings.contains(string))
+			return false;
+		return warnings.add(string);
+	}
+
+	public static void printWarning() {
+		List<String> list = new ArrayList<String>(warnings.size());
+		list.addAll(warnings);
+		list.sort(null);
+		list.forEach(s -> System.out.println(s));
 	}
 }

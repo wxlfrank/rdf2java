@@ -14,9 +14,11 @@ import org.open.rdfs.java.JavaUtil;
 public class JavaReflectUtils {
 
 	private static Method LIST_ADDALL_METHOD = null;
+	private static Method LIST_ADD_METHOD = null;
 	static {
 		try {
 			LIST_ADDALL_METHOD = List.class.getMethod("addAll", Collection.class);
+			LIST_ADD_METHOD = List.class.getMethod("add", Object.class);
 		} catch (NoSuchMethodException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -106,7 +108,12 @@ public class JavaReflectUtils {
 				try {
 					Object collection = method.invoke(obj);
 					if (method.getReturnType().isAssignableFrom(List.class)) {
-						LIST_ADDALL_METHOD.invoke(collection, value);
+						if (value instanceof Collection<?>) {
+							LIST_ADDALL_METHOD.invoke(collection, value);
+						} else {
+							LIST_ADD_METHOD.invoke(collection, value);
+
+						}
 					}
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					// TODO Auto-generated catch block
@@ -150,9 +157,12 @@ public class JavaReflectUtils {
 	 */
 	protected Map<String, Object> createJavaFieldSetter(Class<?> java_class) {
 		Map<String, Object> fieldAccessor = new HashMap<String, Object>();
+		Class<?> parent = java_class.getSuperclass();
+		if (parent != null) {
+			fieldAccessor.putAll(getJavaFieldSetter(parent));
+		}
 		for (Field field : java_class.getDeclaredFields()) {
-			RDF rdf = field.getAnnotation(RDF.class);
-			if (rdf != null) {
+			for (RDF rdf : field.getAnnotationsByType(RDF.class)) {
 				String uri = rdf.namespace() + rdf.local();
 				try {
 					Class<?> field_type = field.getType();

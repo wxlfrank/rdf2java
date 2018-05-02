@@ -1,5 +1,6 @@
 package org.open.rdfs.structure;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -56,5 +57,9 @@ public class ClassEx extends TypeEx {
 		parents = par_Parents;
 		Set<Class> temp = getClazz().getParents();
 		parents.forEach(parent -> temp.add(parent.getClazz()));
+	}
+
+	public Collection<? extends Binding> getFields() {
+		return contents.values();
 	}
 }

@@ -1,7 +1,11 @@
 package org.epos.dcat;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
@@ -67,7 +71,7 @@ public class TestRDFMapper {
 			e.printStackTrace();
 		}
 		ContactPoint cp = new ContactPoint();
-		cp.setTelephone(new org.w3._2001_XMLSchema.String("45029792"));
+		cp.setTelephone(new org.w3._2001_XMLSchema.String("1234567"));
 		dataset.getContactPoint().add(cp);
 		StringWriter result = new StringWriter();
 		mapper.write(dataset).write(result, "TURTLE");
@@ -80,6 +84,41 @@ public class TestRDFMapper {
 		mapper.write(javaObject).write(result, "TURTLE");
 		String read = result.getBuffer().toString();
 		Assert.assertTrue(write.equals(read));
+	}
+
+	@Test
+	public void testExamples() {
+		try {
+			final RDFMapper mapper = new RDFMapper();
+			Files.list(Paths.get("EPOS-DCAT-AP/examples")).forEach(path -> {
+				if (!path.toFile().isHidden()) {
+					System.out.println("------------------------------------------------");
+					System.out.println(path);
+					Model model = ModelFactory.createDefaultModel();
+					try {
+						model.read(path.toUri().toURL().toString(), null, "TURTLE");
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					StringWriter result = new StringWriter();
+					model.write(result, "TURTLE");
+//					String orginal = result.toString();
+//					System.out.println(orginal);
+					Object javaObject = mapper.read(model);
+					Assert.assertNotNull(javaObject);
+					result = new StringWriter();
+					mapper.write(javaObject).write(result, "TURTLE");
+//					Assert.assertTrue(result.toString().equals(orginal));
+//					System.out.println(result.toString());
+					
+				}
+			});
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test

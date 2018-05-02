@@ -131,7 +131,21 @@ public class RDFMapper {
 					if (read_topmost.contains(java_object))
 						read_topmost.remove(java_object);
 				}
-				Object accessor = util.getJavaFieldSetter(java_subject.getClass()).get(stmt.getPredicate().getURI());
+				Resource resource = stmt.getPredicate();
+				String uri = RDFSUtil.unifyNS(resource.getNameSpace()) + resource.getLocalName();
+				Object accessor = util.getJavaFieldSetter(java_subject.getClass()).get(uri);
+				if(accessor == null) {
+					
+					String warning = model.getNsURIPrefix(resource.getNameSpace()) + ":" + resource.getLocalName() + " is not defined in epos-dcat-ap_shapes.ttl";
+					Resource type = RDFSUtil.getType(rdf_subject);
+					warning += ". It should defined in " + model.getNsURIPrefix(type.getNameSpace()) + ":" + type.getLocalName() + " or its superclass.";
+					if(Util.addWarning(warning)) {
+//						System.out.println("--------------------------");
+//						model.getNsPrefixMap().forEach((a, b)-> System.out.println(a + "-->" + b));;
+						System.out.println(warning);
+					}
+//					System.out.println("There is no right accessor for the property " + uri + " in the definition of the class " + java_subject.getClass().getName());
+				}
 				util.setProperty(accessor, java_subject, java_object);
 			}
 
@@ -232,10 +246,11 @@ public class RDFMapper {
 	private Property findRDFProperty(Model model, Field field) {
 		Property result = field2rdfProperty.get(field);
 		if (result == null) {
-			RDF annotation = field.getAnnotation(RDF.class);
-			if (null == annotation)
+			RDF[] annotations = field.getAnnotationsByType(RDF.class);
+			if (annotations.length == 0)
 				return null;
-			result = model.createProperty(annotation.namespace(), annotation.local());
+			RDF annotation = annotations[0];
+			result = model.createProperty(annotation .namespace(), annotation.local());
 			field2rdfProperty.put(field, result);
 		}
 		return result;

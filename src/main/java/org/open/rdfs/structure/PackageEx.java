@@ -297,6 +297,7 @@ public class PackageEx extends Binding implements Configurable {
 		return fields;
 	}
 
+	private RDFSUtilWithCache cache = RDFSUtilWithCache.INSTANCE;
 	private FieldEx toFieldEx(ClassEx classEx, String local, Resource rdfsProperty) {
 		/**
 		 * create a field in each of the found domains
@@ -317,7 +318,6 @@ public class PackageEx extends Binding implements Configurable {
 	}
 
 	public void handleShape(ClassEx classEx, Resource nodeShape) {
-		RDFSUtilWithCache cache = RDFSUtilWithCache.INSTANCE;
 		for (Resource propertyShape : cache.getShaclProperties(nodeShape)) {
 			Resource path = RDFSUtil.getPath(propertyShape);
 			FieldEx fieldEx = toFieldEx(path, classEx);

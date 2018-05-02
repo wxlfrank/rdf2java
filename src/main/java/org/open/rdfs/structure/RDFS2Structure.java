@@ -2,9 +2,12 @@ package org.open.rdfs.structure;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
 import org.open.rdfs.RDFSFile;
 import org.open.rdfs.java.Constants;
 
@@ -25,7 +28,9 @@ public class RDFS2Structure extends Binding implements Configurable {
 			local_files.forEach(local -> translate(local, false));
 		}
 	}
-	public RDFS2Structure() {}
+
+	public RDFS2Structure() {
+	}
 
 	public PackageEx createPackageEx(RDFSFile rdfs) {
 		return new PackageEx(this, rdfs.getNamespace(), rdfs.getModel());
@@ -38,10 +43,32 @@ public class RDFS2Structure extends Binding implements Configurable {
 			packageEx.toClassEx(rdfsClass);
 		}
 		// for those properties without domains
-//		for (Resource rdfsProperty : cache.getProperties(model)) {
-//			packageEx.toFieldEx(rdfsProperty);
-//		}
+		// for (Resource rdfsProperty : cache.getProperties(model)) {
+		// packageEx.toFieldEx(rdfsProperty);
+		// }
 		packageEx.handleShape();
+
+		model.listStatements(null, OWL.equivalentProperty, (RDFNode) null).forEachRemaining(stm -> {
+			for (FieldEx iter : packageEx.toFieldEx(stm.getSubject())) {
+				Resource obj = (Resource) stm.getObject();
+				Set<FieldEx> other = packageEx.toFieldEx(obj);
+				if (other.isEmpty()) {
+					other.add(new FieldEx(new ClassEx(new PackageEx(null, obj.getNameSpace(), null), "", null),
+							obj.getLocalName(), obj));
+				}
+				iter.addEquivalence(other);
+			}
+		});
+		System.out.println(model.listStatements(null, OWL.equivalentClass, (RDFNode) null).toList().size());
+		model.listStatements(null, OWL.equivalentClass, (RDFNode) null).forEachRemaining(stm -> {
+			ClassEx classex = packageEx.toClassEx(stm.getSubject());
+			Resource obj = (Resource) stm.getObject();
+			ClassEx other = packageEx.toClassEx(obj);
+			if (other == null) {
+				other = new ClassEx(new PackageEx(null, obj.getNameSpace(), null), obj.getLocalName(), null);
+			}
+			classex.addEquivalence(other);
+		});
 	}
 
 	public RDFSExConfig getConfiguration() {
