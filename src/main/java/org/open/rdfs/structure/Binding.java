@@ -7,7 +7,7 @@ import java.util.Set;
 
 public abstract class Binding {
 
-	protected Map<String, ? extends Binding> contents = new HashMap<String, Binding>();
+	protected Map<Object, Binding> contents = new HashMap<Object, Binding>();
 	protected Binding container;
 	protected Object source;
 	protected Object target;
@@ -25,15 +25,14 @@ public abstract class Binding {
 	}
 
 	public void addContent(Binding content) {
-		this.getContents().put(content.getHashString(), content);
+		this.getContents().put(content.getHash(), content);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Map<String, Binding> getContents() {
-		return (Map<String, Binding>) contents;
+	public Map<Object, Binding> getContents() {
+		return contents;
 	}
 
-	public String getHashString() {
+	public Object getHash() {
 		return "";
 	}
 
@@ -53,7 +52,7 @@ public abstract class Binding {
 		if (this.container != container) {
 			this.container = container;
 			if (container != null) {
-				container.getContents().put(getHashString(), this);
+				container.getContents().put(getHash(), this);
 			}
 		}
 	}

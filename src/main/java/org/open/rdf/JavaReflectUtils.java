@@ -123,7 +123,11 @@ public class JavaReflectUtils {
 				try {
 					((Method) accessor).invoke(obj, value);
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
+					System.err.println(((Method) accessor).getDeclaringClass().getName());
+					System.err.println(((Method) accessor).getName());
+					System.err.println(value);
+					System.err.println(value.getClass().getName());
+					System.err.println(((Method) accessor).getParameterTypes()[0].getName());
 				}
 			}
 		}

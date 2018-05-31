@@ -46,10 +46,11 @@ public class Util {
 	}
 	private static Set<String> warnings = new LinkedHashSet<String>();
 
-	public static boolean addWarning(String string) {
-		if (warnings.contains(string))
+	public static boolean addWarning(String warning) {
+		if (warnings.contains(warning))
 			return false;
-		return warnings.add(string);
+		System.out.println(warning);
+		return warnings.add(warning);
 	}
 
 	public static void printWarning() {

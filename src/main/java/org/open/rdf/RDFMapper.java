@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
@@ -19,7 +20,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
 import org.open.Util;
 import org.open.rdf.annotation.RDF;
 import org.open.rdf.annotation.RDFLiteral;
@@ -47,7 +47,7 @@ public class RDFMapper {
 	 * The hash table that maps the RDF resource which is a RDF:Class to its
 	 * corresponding java class.
 	 */
-	private final Map<Resource, Class<?>> rdf_class2java_class = new HashMap<Resource, Class<?>>();
+	private final Map<String, Class<?>> rdfClass2javaClass = new HashMap<String, Class<?>>();
 
 	/**
 	 * The java objects that are translated from RDF resources
@@ -64,7 +64,7 @@ public class RDFMapper {
 	 * The utilities to retrieve java reflective information, e.g, Class, Field,
 	 * Method, etc.
 	 */
-	private JavaReflectUtils util = new JavaReflectUtils();
+	private JavaReflectUtils javaUtil = new JavaReflectUtils();
 
 	/**
 	 * Find the RDF class for a java runtime class {@code java_runtime_class}
@@ -78,11 +78,14 @@ public class RDFMapper {
 	public Object findRDFClass(Model rdf_model, Class<?> java_runtime_class) {
 		Object result = javaclass2rdftype.get(java_runtime_class);
 		if (result == null) {
-			RDF annotation = java_runtime_class.getAnnotation(RDF.class);
-			if (annotation != null) {
+			RDF[] annotations = java_runtime_class.getAnnotationsByType(RDF.class);
+			if (annotations.length > 0) {
+				RDF annotation = annotations[0];
 				result = rdf_model.createResource(annotation.namespace() + annotation.local());
 			} else {
 				RDFLiteral literal = java_runtime_class.getAnnotation(RDFLiteral.class);
+				if (literal == null)
+					System.out.println(java_runtime_class.getName());
 				result = literal.namespace() + literal.local();
 			}
 			if (null == result)
@@ -90,6 +93,113 @@ public class RDFMapper {
 			javaclass2rdftype.put(java_runtime_class, result);
 		}
 		return result;
+	}
+
+	protected Class<?> findCandiate(Class<?> cls, List<Statement> statements) {
+		RDF[] annotations = cls.getAnnotationsByType(RDF.class);
+		Class<?> candidate = cls;
+		if (annotations.length > 1) {
+			Class<?>[] candidates = new Class<?>[annotations.length];
+			candidates[0] = cls;
+			for (int i = 1; i < candidates.length; i++) {
+				RDF annotation = annotations[i];
+				candidates[i] = getClassForURI(annotation.namespace(), annotation.local());
+			}
+
+			int minError = -1;
+			for (Class<?> iter : candidates) {
+				int errorCount = 0;
+				for (Statement statement : statements) {
+					Resource resource = statement.getPredicate();
+					String uri = RDFSUtil.unifyNS(resource.getNameSpace()) + resource.getLocalName();
+					Object accessor = javaUtil.getJavaFieldSetter(iter).get(uri);
+					if (accessor == null) {
+						++errorCount;
+					}
+				}
+				if (minError == -1 || minError > errorCount) {
+					minError = errorCount;
+					candidate = iter;
+				}
+			}
+		}
+		return candidate;
+	}
+
+	final static private Predicate<Statement> filter = new Predicate<Statement>() {
+
+		@Override
+		public boolean test(Statement t) {
+			Property predicate = t.getPredicate();
+			return predicate.equals(org.apache.jena.vocabulary.RDF.type)
+					|| predicate.equals(org.apache.jena.vocabulary.RDFS.label);
+		}
+	};
+
+	protected Object rdfResourcetoJavaObject(Resource rdfSubject) {
+		Resource rdfSubjectType = RDFSUtil.getType(rdfSubject);
+		if (rdfSubjectType == null) {
+			Util.addWarning("Can not find the type of the RDF subject " + RDFSUtil.getId(rdfSubject));
+		}
+		Class<?> javaSubjectClass = getJavaClassOfRDFResource(rdfSubjectType);
+		if (javaSubjectClass == DEFAULT_CLASS) {
+			// rdfResource2javaObject.put(rdfSubject, DEFAULT);
+			return DEFAULT;
+		}
+		Model model = rdfSubject.getModel();
+		List<Statement> rdfSubjectStmts = model.listStatements(rdfSubject, null, (RDFNode) null).toList();
+		rdfSubjectStmts.removeIf(filter);
+		javaSubjectClass = findCandiate(javaSubjectClass, rdfSubjectStmts);
+
+		// create java object for the rdf subject
+		Object javaSubject = createJavaObjectForRDFResource(rdfSubject, javaSubjectClass);
+		// rdfResource2javaObject.put(rdfSubject, javaSubject);
+		if (javaSubject == DEFAULT)
+			return DEFAULT;
+		read_topmost.add(javaSubject);
+
+		for (Statement rdfSubjectStmt : rdfSubjectStmts) {
+			// translate RDF predicate
+			Resource resource = rdfSubjectStmt.getPredicate();
+			String iri = RDFSUtil.unifyNS(resource.getNameSpace()) + resource.getLocalName();
+			Object javaAccessor = javaUtil.getJavaFieldSetter(javaSubjectClass).get(iri);
+			if (javaAccessor == null) {
+				String warning = model.getNsURIPrefix(resource.getNameSpace()) + ":" + resource.getLocalName()
+						+ " is not defined in epos-dcat-ap_shapes.ttl";
+				warning += ". It should defined in " + model.getNsURIPrefix(rdfSubjectType.getNameSpace()) + ":"
+						+ rdfSubjectType.getLocalName() + " or its superclass.";
+				if (Util.addWarning(warning)) {
+					System.out.println(rdfSubjectStmt);
+				}
+				continue;
+			}
+			// translate RDF object
+			RDFNode rdfObject = rdfSubjectStmt.getObject();
+			Object javaObject = rdfResource2javaObject.get(rdfObject);
+//			if (javaObject != null) {
+//				System.out.println(rdfSubjectStmt.toString());
+//				System.out.println(rdfObject.toString());
+//				System.out.println(javaObject);
+//			}
+			boolean newCreated = javaObject == null;
+			if (newCreated) {
+				javaObject = toJavaObject(rdfObject);
+				if (!rdfObject.isLiteral())
+					rdfResource2javaObject.put(rdfObject, javaObject);
+			}
+			if (javaObject != DEFAULT) {
+				if (newCreated) {
+					read_objects.add(javaObject);
+				} else {
+					if (read_topmost.contains(javaObject)) {
+						read_topmost.remove(javaObject);
+						read_objects.add(javaObject);
+					}
+				}
+				javaUtil.setProperty(javaAccessor, javaSubject, javaObject);
+			}
+		}
+		return javaSubject;
 	}
 
 	/**
@@ -100,59 +210,45 @@ public class RDFMapper {
 	 * @return the topmost java objects
 	 */
 	public Object read(Model model) {
-		StmtIterator stmts = model.listStatements();
-		boolean newCreated = false;
-		while (stmts.hasNext()) {
-			Statement stmt = stmts.next();
-			// translate subject
-			Resource rdf_subject = stmt.getSubject();
-			Object java_subject = rdf2java.get(rdf_subject);
-			newCreated = java_subject == null;
-			if (java_subject == null) {
-				java_subject = toJavaObject(rdf_subject);
-			}
-			if (java_subject == null)
-				continue;
-			if (newCreated) {
-				read_topmost.add(java_subject);
-			}
-
-			// translate object
-			RDFNode rdf_object = stmt.getObject();
-			Object java_object = rdf2java.get(rdf_object);
-			newCreated = java_object == null;
-			if (newCreated) {
-				java_object = toJavaObject(rdf_object);
-			}
-			if (java_object != null) {
-				if (newCreated) {
-					read_objects.add(java_object);
-				} else {
-					if (read_topmost.contains(java_object))
-						read_topmost.remove(java_object);
-				}
-				Resource resource = stmt.getPredicate();
-				String uri = RDFSUtil.unifyNS(resource.getNameSpace()) + resource.getLocalName();
-				Object accessor = util.getJavaFieldSetter(java_subject.getClass()).get(uri);
-				if(accessor == null) {
-					
-					String warning = model.getNsURIPrefix(resource.getNameSpace()) + ":" + resource.getLocalName() + " is not defined in epos-dcat-ap_shapes.ttl";
-					Resource type = RDFSUtil.getType(rdf_subject);
-					warning += ". It should defined in " + model.getNsURIPrefix(type.getNameSpace()) + ":" + type.getLocalName() + " or its superclass.";
-					if(Util.addWarning(warning)) {
-//						System.out.println("--------------------------");
-//						model.getNsPrefixMap().forEach((a, b)-> System.out.println(a + "-->" + b));;
-						System.out.println(warning);
-					}
-//					System.out.println("There is no right accessor for the property " + uri + " in the definition of the class " + java_subject.getClass().getName());
-				}
-				util.setProperty(accessor, java_subject, java_object);
-			}
-
+		for (Resource rdfSubject : model.listSubjects().toList()) {
+			rdfResourcetoJavaObjectEx(rdfSubject);
 		}
 		if (read_topmost.isEmpty())
 			return read_objects.isEmpty() ? null : read_objects;
 		return read_topmost.size() == 1 ? read_topmost.iterator().next() : read_topmost;
+
+	}
+
+	private Object rdfResourcetoJavaObjectEx(Resource rdfSubject) {
+		Object javaSubject = rdfResource2javaObject.get(rdfSubject);
+		// If rdf_subject has been transformed to java object.
+		if (javaSubject == null) {
+			javaSubject = rdfResourcetoJavaObject(rdfSubject);
+			rdfResource2javaObject.put(rdfSubject, javaSubject);
+		}
+		return javaSubject;
+	}
+
+	private Object createJavaObjectForRDFResource(Resource rdfSubject, Class<?> javaClass) {
+		Object result = null;
+		try {
+			result = javaClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			Util.addWarning(
+					"Can not create an java instance of " + javaClass.getName() + " for " + RDFSUtil.getId(rdfSubject));
+			result = DEFAULT;
+		}
+		return result;
+	}
+
+	private Class<?> getJavaClassOfRDFResource(Resource resource) {
+		// Resource rdfResourceType = RDFSUtil.getType(resource);
+		// if (rdfResourceType == null) {
+		// Util.addWarning("Can not find the type of the RDF subject " +
+		// RDFSUtil.getId(resource));
+		// }
+		return resource != null ? getClassForURI(resource.getNameSpace(), resource.getLocalName()) : DEFAULT_CLASS;
+		// return getClassForURI(resource.getNameSpace(), resource.getLocalName());
 	}
 
 	/**
@@ -170,6 +266,8 @@ public class RDFMapper {
 		if (java_object instanceof Collection<?>) {
 			List<RDFNode> results = new ArrayList<RDFNode>();
 			for (Object iter : (Collection<?>) java_object) {
+				if (iter == null)
+					System.out.println("");
 				results.add(toRDFResource(rdf_model, iter));
 			}
 			if (!results.isEmpty())
@@ -203,11 +301,11 @@ public class RDFMapper {
 	 */
 	public void toRDFStatement(Model model, Resource rdf_subject, Object java_object) {
 		java.lang.Class<?> java_class = java_object.getClass();
-		Map<Field, Object> fieldAccessor = util.getJavaFieldGetter(java_class);
+		Map<Field, Object> fieldAccessor = javaUtil.getJavaFieldGetter(java_class);
 		for (Entry<Field, Object> field_accessor : fieldAccessor.entrySet()) {
 			Field field = field_accessor.getKey();
 			Object java_accessor = field_accessor.getValue();
-			Object java_value = util.getJavaFieldValue(java_class, java_accessor, java_object);
+			Object java_value = javaUtil.getJavaFieldValue(java_class, java_accessor, java_object);
 			if (java_value == null || (java_value instanceof Collection<?> && ((Collection<?>) java_value).isEmpty()))
 				continue;
 			Property rdf_property = findRDFProperty(model, field);
@@ -250,11 +348,13 @@ public class RDFMapper {
 			if (annotations.length == 0)
 				return null;
 			RDF annotation = annotations[0];
-			result = model.createProperty(annotation .namespace(), annotation.local());
+			result = model.createProperty(annotation.namespace(), annotation.local());
 			field2rdfProperty.put(field, result);
 		}
 		return result;
 	}
+
+	private static final Class<?> DEFAULT_CLASS = Object.class;
 
 	/**
 	 * Get the java class for the RDF class {@code}
@@ -263,15 +363,17 @@ public class RDFMapper {
 	 *            the RDF class
 	 * @return the corresponding java class
 	 */
-	private Class<?> getClassForURI(Resource rdf_class) {
-		String ns = rdf_class.getNameSpace(), local = rdf_class.getLocalName();
-		Class<?> result = rdf_class2java_class.get(rdf_class);
+	private Class<?> getClassForURI(String namespace, String local) {
+		String uri = namespace + local;
+		Class<?> result = rdfClass2javaClass.get(uri);
 		if (result == null) {
 			try {
-				result = Class.forName(config.getPackageName(ns) + "." + local);
-				rdf_class2java_class.put(rdf_class, result);
+				result = Class.forName(config.getPackageName(namespace) + "." + local);
+				rdfClass2javaClass.put(uri, result);
 			} catch (ClassNotFoundException e) {
-				return null;
+				rdfClass2javaClass.put(uri, DEFAULT_CLASS);
+				Util.addWarning("Can not find a java class for the resource " + uri);
+				return DEFAULT_CLASS;
 			}
 		}
 		return result;
@@ -281,88 +383,80 @@ public class RDFMapper {
 	 * Get the java object which is instance of a java class {@code java_class}
 	 * corresponding to a RDF resource
 	 * 
-	 * @param rdf_resource
+	 * @param rdfResource
 	 *            the RDF resource
-	 * @param java_class
+	 * @param javaClass
 	 *            the java class
 	 * @return the java object
 	 */
-	private Object getJavaObject(RDFNode rdf_resource, Class<?> java_class) {
-		Object result = Util.getFromCache(java_class2rdf_resource2java_object, java_class, rdf_resource);
-		if (result == null) {
+	private Object getJavaObject(RDFNode rdfResource, Class<?> javaClass) {
+		Object javaObject = Util.getFromCache(java_class2rdf_resource2java_object, javaClass, rdfResource);
+		if (javaObject == null) {
 			try {
-				result = java_class.newInstance();
+				javaObject = javaClass.newInstance();
 			} catch (InstantiationException | IllegalAccessException e) {
-				return null;
+				javaObject = DEFAULT;
 			}
-			Util.putIntoCache(java_class2rdf_resource2java_object, java_class, rdf_resource, result);
+			Util.putIntoCache(java_class2rdf_resource2java_object, javaClass, rdfResource, javaObject);
 		}
-		return result;
+		return javaObject;
 	}
 
-	Map<RDFNode, Object> rdf2java = new HashMap<RDFNode, Object>();
+	private static final Object DEFAULT = new Object();
+	Map<RDFNode, Object> rdfResource2javaObject = new HashMap<RDFNode, Object>();
 
 	/**
 	 * Translate a RDF resource to a java object
 	 * 
-	 * @param rdf_node
+	 * @param rdfNode
 	 *            the RDF resource
 	 * @return the translated java object and whether the object is newly created or
 	 *         not
 	 */
-	private Object toJavaObject(RDFNode rdf_node) {
-		Object result = rdf2java.get(rdf_node);
-		if (result != null)
-			return result;
-		if (rdf_node instanceof Resource) {
-			Resource resource = (Resource) rdf_node;
-			List<Resource> list = RDFSUtil.getList(resource);
-			if (list == null) {
-				Resource type = RDFSUtil.getType(rdf_node);
-				if (type != null) {
-
-					Class<?> cls = getClassForURI(type);
-					if (cls == null)
-						return null;
-					result = getJavaObject(rdf_node, cls);
-					rdf2java.put(rdf_node, result);
-					return result;
-				}
+	private Object toJavaObject(RDFNode rdfNode) {
+		Object javaObject = null;
+		if (rdfNode instanceof Resource) {
+			Resource rdfResource = (Resource) rdfNode;
+			List<Resource> rdfResources = RDFSUtil.getList(rdfResource);
+			if (rdfResources == null) {
+				return rdfResourcetoJavaObjectEx(rdfResource);
 			} else {
-				List<Object> results = new ArrayList<Object>();
-				for (Resource iter : list) {
-					Object cur = toJavaObject(iter);
-					if (read_topmost.contains(cur)) {
-						read_topmost.remove(cur);
-						read_objects.add(cur);
+				List<Object> javaObjects = new ArrayList<Object>();
+				for (Resource iter : rdfResources) {
+					javaObject = rdfResourcetoJavaObjectEx(iter);
+					if (javaObject == DEFAULT)
+						continue;
+					if (read_topmost.contains(javaObject)) {
+						read_topmost.remove(javaObject);
+						read_objects.add(javaObject);
 					}
-
-					results.add(cur);
+					javaObjects.add(javaObject);
 				}
-				rdf2java.put(rdf_node, results);
-				return results;
+				// rdfResource2javaObject.put(rdfNode, javaObjects);
+				return javaObjects;
 			}
-		} else if (rdf_node instanceof Literal) {
-			Literal literal = (Literal) rdf_node;
-			RDFDatatype type = literal.getDatatype();
+		} else if (rdfNode instanceof Literal) {
+			Literal literal = (Literal) rdfNode;
+			RDFDatatype rdfDataType = literal.getDatatype();
 			Object value = literal.getValue();
-			if (type == XSDDatatype.XSDstring) {
+			if (rdfDataType == XSDDatatype.XSDstring) {
 				return new org.w3._2001_XMLSchema.String(value);
-			} else if (type == XSDDatatype.XSDdate)
+			} else if (rdfDataType == XSDDatatype.XSDdate)
 				return new org.w3._2001_XMLSchema.Date(value);
-			else if (type == XSDDatatype.XSDboolean)
+			else if (rdfDataType == XSDDatatype.XSDboolean)
 				return new org.w3._2001_XMLSchema.Boolean(value);
-			else if (type == XSDDatatype.XSDint)
+			else if (rdfDataType == XSDDatatype.XSDint)
 				return new org.w3._2001_XMLSchema.Integer(value);
-			else if (type == XSDDatatype.XSDfloat)
+			else if (rdfDataType == XSDDatatype.XSDfloat)
 				return new org.w3._2001_XMLSchema.Float(value);
-			else if (type == XSDDatatype.XSDdouble)
+			else if (rdfDataType == XSDDatatype.XSDdouble)
 				return new org.w3._2001_XMLSchema.Decimal(value);
-			else if (type == XSDDatatype.XSDdateTime)
+			else if (rdfDataType == XSDDatatype.XSDdateTime)
 				return new org.w3._2001_XMLSchema.DateTime(value);
-			else if (type == XSDDatatype.XSDanyURI)
+			else if (rdfDataType == XSDDatatype.XSDanyURI)
 				return new org.w3._2001_XMLSchema.AnyURI(value);
 		}
-		return null;
+		return DEFAULT;
 	}
+
 }

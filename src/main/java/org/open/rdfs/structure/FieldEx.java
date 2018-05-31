@@ -29,7 +29,7 @@ public class FieldEx extends Binding {
 	}
 
 	@Override
-	public String getHashString() {
+	public String getHash() {
 		return getField().getName();
 	}
 

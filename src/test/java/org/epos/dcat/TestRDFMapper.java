@@ -91,7 +91,7 @@ public class TestRDFMapper {
 		try {
 			final RDFMapper mapper = new RDFMapper();
 			Files.list(Paths.get("EPOS-DCAT-AP/examples")).forEach(path -> {
-				if (!path.toFile().isHidden()) {
+				if (!path.toFile().isHidden() && !path.toFile().isDirectory()) {
 					System.out.println("------------------------------------------------");
 					System.out.println(path);
 					Model model = ModelFactory.createDefaultModel();

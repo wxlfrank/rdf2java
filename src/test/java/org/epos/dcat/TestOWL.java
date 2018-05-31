@@ -56,7 +56,7 @@ public class TestOWL {
 				epos_ap = (PackageEx) bind;
 		}
 		Assert.assertNotNull(epos_ap);
-		Map<String, Binding> child = epos_ap.getContents();
+		Map<Object, Binding> child = epos_ap.getContents();
 		String[] Classes = { "Equipment" };
 		for (String cls : Classes) {
 			Assert.assertNotNull(child.get(cls));

@@ -76,7 +76,7 @@ public class RDFS2Structure extends Binding implements Configurable {
 	}
 
 	@Override
-	public String getHashString() {
+	public String getHash() {
 		return null;
 	}
 

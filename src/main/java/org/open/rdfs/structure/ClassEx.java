@@ -32,7 +32,7 @@ public class ClassEx extends TypeEx {
 	}
 
 	@Override
-	public String getHashString() {
+	public String getHash() {
 		return getClazz().getName();
 	}
 

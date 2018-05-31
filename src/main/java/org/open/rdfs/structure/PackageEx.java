@@ -74,7 +74,7 @@ public class PackageEx extends Binding implements Configurable {
 	}
 
 	@Override
-	public String getHashString() {
+	public String getHash() {
 		return getPackage().getName();
 	}
 
