@@ -31,11 +31,11 @@ public class RDFMapper {
 	 * The hash table that maps a java field to a RDF property
 	 */
 	private Map<Field, Property> field2rdfProperty = new HashMap<Field, Property>();
-	/**
-	 * The hash table that maps a resource to a java object, which is stored by the
-	 * object's class
-	 */
-	private final Map<Class<?>, Map<RDFNode, Object>> java_class2rdf_resource2java_object = new HashMap<Class<?>, Map<RDFNode, Object>>();
+//	/**
+//	 * The hash table that maps a resource to a java object, which is stored by the
+//	 * object's class
+//	 */
+//	private final Map<Class<?>, Map<RDFNode, Object>> java_class2rdf_resource2java_object = new HashMap<Class<?>, Map<RDFNode, Object>>();
 
 	private RDFMapperConfig config = new RDFMapperConfig();
 
@@ -379,28 +379,28 @@ public class RDFMapper {
 		return result;
 	}
 
-	/**
-	 * Get the java object which is instance of a java class {@code java_class}
-	 * corresponding to a RDF resource
-	 * 
-	 * @param rdfResource
-	 *            the RDF resource
-	 * @param javaClass
-	 *            the java class
-	 * @return the java object
-	 */
-	private Object getJavaObject(RDFNode rdfResource, Class<?> javaClass) {
-		Object javaObject = Util.getFromCache(java_class2rdf_resource2java_object, javaClass, rdfResource);
-		if (javaObject == null) {
-			try {
-				javaObject = javaClass.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				javaObject = DEFAULT;
-			}
-			Util.putIntoCache(java_class2rdf_resource2java_object, javaClass, rdfResource, javaObject);
-		}
-		return javaObject;
-	}
+//	/**
+//	 * Get the java object which is instance of a java class {@code java_class}
+//	 * corresponding to a RDF resource
+//	 * 
+//	 * @param rdfResource
+//	 *            the RDF resource
+//	 * @param javaClass
+//	 *            the java class
+//	 * @return the java object
+//	 */
+//	private Object getJavaObject(RDFNode rdfResource, Class<?> javaClass) {
+//		Object javaObject = Util.getFromCache(java_class2rdf_resource2java_object, javaClass, rdfResource);
+//		if (javaObject == null) {
+//			try {
+//				javaObject = javaClass.newInstance();
+//			} catch (InstantiationException | IllegalAccessException e) {
+//				javaObject = DEFAULT;
+//			}
+//			Util.putIntoCache(java_class2rdf_resource2java_object, javaClass, rdfResource, javaObject);
+//		}
+//		return javaObject;
+//	}
 
 	private static final Object DEFAULT = new Object();
 	Map<RDFNode, Object> rdfResource2javaObject = new HashMap<RDFNode, Object>();

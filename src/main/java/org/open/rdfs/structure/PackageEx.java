@@ -165,6 +165,8 @@ public class PackageEx extends Binding implements Configurable {
 		// If the resource has different namespace as the model, read the model and find
 		// the corresponding resource, return the model and the resource found
 		PackageEx packageEx = getContainer().getPackageEx(real_ns);
+		if(real_ns.contains("schema.org"))
+			System.out.println("");
 		if (packageEx == null) {
 			RDFSFile rdfsFile = getConfiguration().readWriteModel(real_ns, "TURTLE");
 			packageEx = getContainer().toPackageEx(real_ns, rdfsFile.getModel(), false);
