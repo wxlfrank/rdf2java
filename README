@@ -1,3 +1,40 @@
-Generate RDF library by running TestOWL.testOWL2Java. 
+1. Generate RDF library running TestOWL.testOWL2Java. 
 
-You can change the directory of the generated code in testOWL2Java
+@Test
+public void testOWL2Java() throws IOException {
+
+	List<RDFSFile> files = new ArrayList<RDFSFile>();
+	Files.list(Paths.get("ontology")).forEach(path -> {
+		if (!path.toFile().isHidden())
+			files.add(new RDFSFile(path, "TURTLE"));
+	});
+	RDFS2Structure transform = new RDFS2Structure(files);
+	RDFSFile main = new RDFSFile(Paths.get("epos-dcat-ap_shapes.ttl"), "TURTLE");
+	Collection<Binding> result = transform.translate(main);
+	checkResult(result);
+	JavaGenerator generator = new JavaGenerator(new JavaGenerateConfig());
+	generator.generate(Paths.get(folder_of_generated_library).toFile(), result);
+}
+
+2. Use RDF library to translate you data into RDF structure
+RDFMapper mapper = new RDFMapper();
+Object java_object = null;
+//
+//TODO create your java object from you data
+
+// translate java object to rdf model
+Model model = mapper.write(java_object); 
+/* java_object is 
+a java representation of EPOS Entities such as 
+    Database (org.w3.ns_dcat.Dataset), 
+    WebService (org.epos_eu.epos_dcat_ap.WebService)
+    Person (org.epos_eu.epos_dcat_ap.Person)
+    Organisation (org.epos_eu.epos_dcat_ap.Person)
+    Facility (org.epos_eu.epos_dcat_ap.Facility)
+    Equipment (org.epos_eu.epos_dcat_ap.Equipment)
+    Publication (org.epos_eu.epos_dcat_ap.Publication) */
+
+// Get RDF string
+StringWriter result = new StringWriter();
+model.write(result, "TURTLE");
+result.toString();
