@@ -43,13 +43,6 @@ skos:relatedMatch  a        rdf:Property , owl:SymmetricProperty , owl:ObjectPro
         rdfs:subPropertyOf  skos:related , skos:mappingRelation ;
         skos:definition     "skos:relatedMatch is used to state an associative mapping link between two conceptual resources in different concept schemes."@en .
 
-skos:broadMatch  a          rdf:Property , owl:ObjectProperty ;
-        rdfs:isDefinedBy    <http://www.w3.org/2004/02/skos/core> ;
-        rdfs:label          "has broader match"@en ;
-        rdfs:subPropertyOf  skos:broader , skos:mappingRelation ;
-        owl:inverseOf       skos:narrowMatch ;
-        skos:definition     "skos:broadMatch is used to state a hierarchical mapping link between two conceptual resources in different concept schemes."@en .
-
 skos:related  a             rdf:Property , owl:SymmetricProperty , owl:ObjectProperty ;
         rdfs:comment        "skos:related is disjoint with skos:broaderTransitive"@en ;
         rdfs:isDefinedBy    <http://www.w3.org/2004/02/skos/core> ;
@@ -82,6 +75,13 @@ skos:member  a            rdf:Property , owl:ObjectProperty ;
                             owl:unionOf  ( skos:Concept skos:Collection )
                           ] ;
         skos:definition   "Relates a collection to one of its members."@en .
+
+skos:broadMatch  a          rdf:Property , owl:ObjectProperty ;
+        rdfs:isDefinedBy    <http://www.w3.org/2004/02/skos/core> ;
+        rdfs:label          "has broader match"@en ;
+        rdfs:subPropertyOf  skos:broader , skos:mappingRelation ;
+        owl:inverseOf       skos:narrowMatch ;
+        skos:definition     "skos:broadMatch is used to state a hierarchical mapping link between two conceptual resources in different concept schemes."@en .
 
 skos:changeNote  a          rdf:Property , owl:AnnotationProperty ;
         rdfs:isDefinedBy    <http://www.w3.org/2004/02/skos/core> ;

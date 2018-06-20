@@ -218,10 +218,10 @@ oa:     a                   owl:Ontology ;
                               foaf:name  "Robert Sanderson"
                             ] ;
         dcterms:creator     [ a          foaf:Person ;
-                              foaf:name  "Paolo Ciccarese"
+                              foaf:name  "Benjamin Young"
                             ] ;
         dcterms:creator     [ a          foaf:Person ;
-                              foaf:name  "Benjamin Young"
+                              foaf:name  "Paolo Ciccarese"
                             ] ;
         dcterms:modified    "2016-11-12T21:28:11Z" ;
         owl:versionInfo     "2016-11-12T21:28:11Z" ;

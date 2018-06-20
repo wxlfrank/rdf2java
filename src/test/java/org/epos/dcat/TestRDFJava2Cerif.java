@@ -53,7 +53,7 @@ public class TestRDFJava2Cerif {
 		//TODO
 		
 		// translate java object to rdf model
-		Model model = mapper.write(java_object); 
+		model = mapper.write(java_object); 
 		/* java_object is 
 		a java representation of EPOS Entities such as 
 		Database (org.w3.ns_dcat.Dataset), 

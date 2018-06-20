@@ -421,17 +421,17 @@
         rdfs:subClassOf   :Type ;
         owl:deprecated    true .
 
-:hasTelephone  a                owl:ObjectProperty ;
-        rdfs:comment            "To specify the telephone number for telephony communication with the object"@en ;
-        rdfs:isDefinedBy        <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label              "has telephone"@en ;
-        owl:equivalentProperty  :tel .
-
 :Text   a                 owl:Class ;
         rdfs:comment      "Also called sms telephone"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "Text"@en ;
         rdfs:subClassOf   :TelephoneType .
+
+:hasTelephone  a                owl:ObjectProperty ;
+        rdfs:comment            "To specify the telephone number for telephony communication with the object"@en ;
+        rdfs:isDefinedBy        <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label              "has telephone"@en ;
+        owl:equivalentProperty  :tel .
 
 :Group  a                    owl:Class ;
         rdfs:comment         "Object representing a group of persons or entities.  A group object will usually contain hasMember properties to specify the members of the group."@en ;
@@ -607,16 +607,16 @@
         rdfs:label        "has email"@en ;
         rdfs:range        :Email .
 
-:hasInstantMessage  a     owl:ObjectProperty ;
-        rdfs:comment      "To specify the instant messaging and presence protocol communications with the object. (Was called IMPP in RFC6350)"@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "has messaging"@en .
-
 :postal-code  a           owl:DatatypeProperty ;
         rdfs:comment      "The postal code associated with the address of the object"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "postal code"@en ;
         rdfs:range        xsd:string .
+
+:hasInstantMessage  a     owl:ObjectProperty ;
+        rdfs:comment      "To specify the instant messaging and presence protocol communications with the object. (Was called IMPP in RFC6350)"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "has messaging"@en .
 
 :Gender  a                owl:Class ;
         rdfs:comment      "Used for gender codes. The URI of the gender code must be used as the value for Gender."@en ;
@@ -647,16 +647,16 @@
         rdfs:label        "honorific prefix"@en ;
         rdfs:range        xsd:string .
 
-:Parent  a                owl:Class ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "Parent"@en ;
-        rdfs:subClassOf   :RelatedType .
-
 :street-address  a        owl:DatatypeProperty ;
         rdfs:comment      "The street address associated with the address of the object"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "street address"@en ;
         rdfs:range        xsd:string .
+
+:Parent  a                owl:Class ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "Parent"@en ;
+        rdfs:subClassOf   :RelatedType .
 
 :mailer  a                owl:DatatypeProperty ;
         rdfs:comment      "This data property has been deprecated"@en ;
@@ -755,6 +755,11 @@
         rdfs:label        "role"@en ;
         rdfs:range        xsd:string .
 
+:hasValue  a              owl:ObjectProperty ;
+        rdfs:comment      "Used to indicate the resource value of an object property that requires property parameters"@en ;
+        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
+        rdfs:label        "has value"@en .
+
 :hasCalendarLink  a       owl:ObjectProperty ;
         rdfs:comment      "To specify the calendar associated with the object. (Was called CALURI in RFC6350)"@en ;
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
@@ -770,11 +775,6 @@
         rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
         rdfs:label        "longitude"@en ;
         owl:deprecated    true .
-
-:hasValue  a              owl:ObjectProperty ;
-        rdfs:comment      "Used to indicate the resource value of an object property that requires property parameters"@en ;
-        rdfs:isDefinedBy  <http://www.w3.org/2006/vcard/ns> ;
-        rdfs:label        "has value"@en .
 
 :Dom    a                 owl:Class ;
         rdfs:comment      "This class is deprecated"@en ;
