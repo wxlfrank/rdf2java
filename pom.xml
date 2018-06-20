@@ -37,13 +37,13 @@
 			<version>1.7.25</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>eu.epos</groupId>
 			<artifactId>jsldReader</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/lib/XMLReader-1.0.jar</systemPath>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-arq</artifactId>

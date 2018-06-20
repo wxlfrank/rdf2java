@@ -6,12 +6,17 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.epos.dcat.cerif.RDF2Cerif;
+import org.epos_eu.epos_dcat_ap.Equipment;
+import org.epos_eu.epos_dcat_ap.Facility;
+import org.epos_eu.epos_dcat_ap.Organisation;
+import org.epos_eu.epos_dcat_ap.Person;
+import org.epos_eu.epos_dcat_ap.Publication;
+import org.epos_eu.epos_dcat_ap.WebService;
 import org.junit.Test;
 import org.open.rdf.RDFMapper;
 
@@ -42,17 +47,35 @@ public class TestRDFJava2Cerif {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		final RDFMapper mapper = new RDFMapper();
+		RDFMapper mapper = new RDFMapper();
+		Object java_object = null;
+		//create your java object from you data
+		//TODO
+		
+		// translate java object to rdf model
+		Model model = mapper.write(java_object); 
+		/* java_object is 
+		a java representation of EPOS Entities such as 
+		Database (org.w3.ns_dcat.Dataset), 
+		WebService (org.epos_eu.epos_dcat_ap.WebService)
+		Person (org.epos_eu.epos_dcat_ap.Person)
+		Organisation (org.epos_eu.epos_dcat_ap.Person)
+		Facility (org.epos_eu.epos_dcat_ap.Facility)
+		Equipment (org.epos_eu.epos_dcat_ap.Equipment)
+		Publication (org.epos_eu.epos_dcat_ap.Publication) */
+		
+		// Get RDF string
 		StringWriter result = new StringWriter();
 		model.write(result, "TURTLE");
-		Object javaObject = mapper.read(model);
-		RDF2Cerif rdf2cerif = new RDF2Cerif();
-		if(javaObject instanceof Collection<?>) {
-			for(Object obj : (Collection<?>)javaObject) {
-				rdf2cerif.tocerifObj(obj);
-			}
-		}else
-			rdf2cerif.tocerifObj(javaObject);
+		result.toString();
+//		Object javaObject = mapper.read(model);
+//		RDF2Cerif rdf2cerif = new RDF2Cerif();
+//		if(javaObject instanceof Collection<?>) {
+//			for(Object obj : (Collection<?>)javaObject) {
+//				rdf2cerif.tocerifObj(obj);
+//			}
+//		}else
+//			rdf2cerif.tocerifObj(javaObject);
 	}
 
 }
