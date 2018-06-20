@@ -1,0 +1,3 @@
+Generate RDF library by running TestOWL.testOWL2Java. 
+
+You can change the directory of the generated code in testOWL2Java
