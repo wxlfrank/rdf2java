@@ -115,35 +115,35 @@ dcat:WebService  a        owl:Class , rdfs:Class ;
         a                voaf:Vocabulary , owl:Ontology ;
         rdfs:comment     "?? ????????? ???? ????? ???????? ??? ????? ??????? ??? ????. ??????? ??? ??????????? ????? ??? ?????? ?????  ???????? ???????? ??? ???? ? ???? ????????? ???????? ?? ????????? ?????????? ?? ???????? ??????? ?? ????? ???????."@ar , "DCAT is an RDF vocabulary designed to facilitate interoperability between data catalogs published on the Web.\n          By using DCAT to describe datasets in data catalogs, publishers increase discoverability and enable \n          applications easily to consume metadata from multiple catalogs. It further enables decentralized \n          publishing of catalogs and facilitates federated dataset search across sites. Aggregated DCAT metadata can \n          serve as a manifest file to facilitate digital preservation.\n          DCAT is defined at http://www.w3.org/TR/vocab-dcat/. Any variance between that normative\n          document and this schema is an error in this schema."@en , "DCAT es un vocabulario RDF dise?ado para facilitar la interoperabilidad entre catálogo de datos publicados en la Web.\n          Gracias a utilizar DCAT para describir conjuntos de datos en los catálogo de datos, los editores aumentan el descubrimiento y permiten\n          que las aplicaciones consuman fácilmente los metadatos de varios catálogos."@es , "DCAT est un vocabulaire développé pour faciliter l'interopérabilité entre les jeux de données publiées sur le Web.\n\t\t\t\tEn utilisant DCAT pour décrire les jeux de données dans les catalogues de données, les fournisseurs de données augmentent leur découverte et permettent\n\t\t\t\tque les applications facilement les métadonnées de plusieurs catalogues. Il permet en plus la publication décentralisée des catalogues et facilitent\n\t\t\t\tla recherche fédérée des données entre plusieurs sites. Les métadonnées DCAT aggrégées peuvent servir comme un manifeste pour faciliter la préservation digitale des ressources.\n\t\t\t\tDCAT est définie à l'adresse http://www.w3.org/TR/vocab-dcat/. Une quelconque version de ce document normatif et ce vocabulaire est une erreur dans ce vocabulaire"@fr , "Το DCAT ε?ναι ?να RDF λεξιλ?γιο που σχεδι?σθηκε για να κ?νει εφικτ? τη διαλειτουργικ?τητα μεταξ? καταλ?γων δεδομ?νων στον Παγκ?σμιο Ιστ?.\n          Χρησιμοποι?ντα? το DCAT για την περιγραφ? συν?λων δεδομ?νων, οι εκδ?τε? αυτ?ν αυξ?νουν την ανακαλυψιμ?τητα και επιτρ?πουν στι? εφαρμογ?? την ε?κολη καταν?λωση μεταδεδομ?νων απ? πολλαπλο?? καταλ?γου?.\n          Επιπλ?ον, δ?νει τη δυνατ?τητα για αποκεντρωμ?νη ?κδοση και δι?θεση καταλ?γων και επιτρ?πει δυνατ?τητε? ενοποιημ?νη? αναζ?τηση? μεταξ? διαφορετικ?ν πηγ?ν.\n          Συγκεντρωτικ? μεταδεδομ?να που ?χουν περιγραφε? με το DCAT μπορο?ν να χρησιμοποιηθο?ν σαν ?να δηλωτικ? αρχε?ο (manifest file) ?στε να διευκολ?νουν την ψηφιακ? συντ?ρηση."@el , "DCATは、ウェブ上で公開されたデータ?カタログ間の相互運用性の促進を目的とするRDFの語彙です。このドキュメントでは、その利用のために、スキーマを定義し、例を提供します。\nデータ?カタログ内のデータセットを記述するためにDCATを用いると、公開者が、発見可能性を増加させ、アプリケーションが複数のカタログのメタデータを容易に利用できるようになります。さらに、カタログの分散公開を可能にし、複数のサイトにまたがるデータセットの統合検索を促進します。集約されたDCATメタデータは、ディジタル保存を促進するためのマニフェスト?ファイルとして使用できます。"@ja ;
         rdfs:label       "データ?カタログ語彙（DCAT）"@ja , "El vocabulario de catálogo de datos"@es , "Το λεξιλ?γιο των καταλ?γων δεδομ?νων"@el , "Le vocabulaire des jeux de données "@fr , "The data catalog vocabulary"@en , "????????? ????? ????? ????????"@ar ;
-        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
-                           foaf:name     "Ghislain Auguste Atemezing"
-                         ] ;
-        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
-        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
-                           foaf:name      "Shuji Kamitsuna"
-                         ] ;
-        dct:contributor  [ rdfs:seeAlso        <http://philarcher.org/foaf.rdf#me> ;
-                           schema:affiliation  <http://www.w3.org/data#W3C> ;
-                           foaf:homepage       <http://www.w3.org/People/all#phila> ;
-                           foaf:name           "Phil Archer"
-                         ] ;
-        dct:contributor  [ foaf:name  "Richard Cyganiak" ] ;
-        dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://okfn.org> ;
-                                                 foaf:name      "Open Knowledge Foundation"
-                                               ] ;
-                           foaf:name           "Rufus Pollock"
-                         ] ;
-        dct:contributor  [ foaf:name  "Martin Alvarez-Espinar" ] ;
         dct:contributor  [ rdfs:seeAlso   <http://makxdekkers.com/makxdekkers.rdf#me> ;
                            foaf:homepage  <http://makxdekkers.com/> ;
                            foaf:name      "Makx Dekkers"
+                         ] ;
+        dct:contributor  [ rdfs:seeAlso  <http://www.eurecom.fr/~atemezin/gatemezing-foaf.rdf> ;
+                           foaf:name     "Ghislain Auguste Atemezing"
                          ] ;
         dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://ec.europa.eu/dgs/informatics/> ;
                                                  foaf:name      "European Commission, DG DIGIT"
                                                ] ;
                            foaf:name           "Vassilios Peristeras"
                          ] ;
+        dct:contributor  [ foaf:name  "Richard Cyganiak" ] ;
+        dct:contributor  [ foaf:homepage  <http://www.asahi-net.or.jp/~ax2s-kmtn/> ;
+                           foaf:name      "Shuji Kamitsuna"
+                         ] ;
+        dct:contributor  [ schema:affiliation  [ foaf:homepage  <http://okfn.org> ;
+                                                 foaf:name      "Open Knowledge Foundation"
+                                               ] ;
+                           foaf:name           "Rufus Pollock"
+                         ] ;
+        dct:contributor  [ foaf:name  "Martin Alvarez-Espinar" ] ;
+        dct:contributor  [ foaf:name  "Marios Meimaris" ] ;
         dct:contributor  [ foaf:name  "Boris Villazón-Terrazas" ] ;
+        dct:contributor  [ rdfs:seeAlso        <http://philarcher.org/foaf.rdf#me> ;
+                           schema:affiliation  <http://www.w3.org/data#W3C> ;
+                           foaf:homepage       <http://www.w3.org/People/all#phila> ;
+                           foaf:name           "Phil Archer"
+                         ] ;
         dct:creator      [ rdfs:seeAlso  <http://fadmaa.me/foaf.ttl> ;
                            foaf:name     "Fadi Maali"
                          ] ;
@@ -167,19 +167,19 @@ dcat:accessURL  a         owl:ObjectProperty , rdf:Property ;
         rdfs:range        rdfs:Resource ;
         vann:usageNote    "確実にダウンロードでない場合や、ダウンロードかどうかが不明である場合は、downloadURLではなく、accessURLを用いてください。\nランディング?ページを通じてしか配信にアクセスできない場合（つまり、直接的なダウンロードURLが不明）は、配信におけるaccessURLとしてランディング?ページのリンクをコピーすべきです（SHOULD）。"@ja , "Η τιμ? ε?ναι ?να URL.\n\t\t\t\t\tΑν η/οι διανομ?/?? ε?ναι προσβ?σιμη/ε? μ?νο μ?σω μ?α? ιστοσελ?δα? αρχικ?? πρ?σβαση? (δηλαδ? αν δεν υπ?ρχουν γνωστ?? διευθ?νσει? ?μεση? μεταφ?ρτωση?), τ?τε ο σ?νδεσμο? τη? ιστοσελ?δα? αρχικ?? πρ?σβαση? πρ?πει να αναπαραχθε? ω? accessURL σε μ?α διανομ?."@el , "La valeur est une URL.\n\t\t\t\t\t\tSi la distribution est accessible seulement au travers d'une page d'atterrissage (c-à-dire on n'ignore une URL de téléchargement direct) ,\n\t\t\t\t\t\talors le lien à la page d'atterrissage doit être dupliqué comee accessURL sur la distribution."@fr , "El valor es una URL.\n          Si la distribución es accesible solamente través de una página de aterrizaje (i.e., no se conoce una URL de descarga directa),\n          entonces el enlance a la página de aterrizaje debe ser duplicado como accessURL sobre la distribución."@es , "The value is a URL.\n          If the distribution(s) are accessible only through a landing page (i.e. direct download URLs are \n          not known), then the landing page link should be duplicated as accessURL on a distribution."@en .
 
-dcat:record  a            owl:ObjectProperty , rdf:Property ;
-        rdfs:comment      "Συνδ?ει ?ναν κατ?λογο με τι? καταγραφ?? του."@el , "Links a catalog to its records."@en , "Enlaza un catálogo a sus registros."@es , "???? ?????? ???? ????"@ar , "Relie un catalogue à ses registres"@fr , "カタログの一部であるカタログ?レコード。"@ja ;
-        rdfs:domain       dcat:Catalog ;
-        rdfs:isDefinedBy  <http://www.w3.org/TR/vocab-dcat/> ;
-        rdfs:label        "カタログ?レコード"@ja , "???"@ar , "registre"@fr , "record"@en , "registro"@es , "καταγραφ?"@el ;
-        rdfs:range        dcat:CatalogRecord .
-
 dcat:contactPoint  a      rdf:Property , owl:ObjectProperty ;
         rdfs:comment      "Enlaza un conjunto de datos a información de contacto relevante utilizando VCard"@es , "Links a dataset to relevant contact information which is provided using VCard."@en , "Relie un jeu de données à une information de contact utile en utilisant VCard."@fr , "データセットを、VCardを用いて提供されている適切な連絡先情報にリンクします。"@ja , "???? ????? ???????? ?????? ????? ????  ???????? VCard"@ar , "Συνδ?ει ?να σ?νολο δεδομ?νων με ?να σχετικ? σημε?ο επικοινων?α?, μ?σω VCard."@el ;
         rdfs:domain       dcat:Dataset ;
         rdfs:isDefinedBy  <http://www.w3.org/TR/vocab-dcat/> ;
         rdfs:label        "point de contact"@fr , "????? ?????"@ar , "窓口"@ja , "contact point"@en , "σημε?ο επικοινων?α?"@el , "punto de contacto"@es ;
         rdfs:range        v:Kind .
+
+dcat:record  a            owl:ObjectProperty , rdf:Property ;
+        rdfs:comment      "Συνδ?ει ?ναν κατ?λογο με τι? καταγραφ?? του."@el , "Links a catalog to its records."@en , "Enlaza un catálogo a sus registros."@es , "???? ?????? ???? ????"@ar , "Relie un catalogue à ses registres"@fr , "カタログの一部であるカタログ?レコード。"@ja ;
+        rdfs:domain       dcat:Catalog ;
+        rdfs:isDefinedBy  <http://www.w3.org/TR/vocab-dcat/> ;
+        rdfs:label        "カタログ?レコード"@ja , "???"@ar , "registre"@fr , "record"@en , "registro"@es , "καταγραφ?"@el ;
+        rdfs:range        dcat:CatalogRecord .
 
 dcat:theme  a               rdf:Property , owl:ObjectProperty ;
         rdfs:comment        "The main category of the dataset. A dataset can have multiple themes."@en , "データセットの主要カテゴリー。データセットは複数のテーマを持つことができます。"@ja , "La catégorie principale du jeu de données. Un jeu de données peut avoir plusieurs thèmes."@fr , "Η κ?ρια κατηγορ?α του συν?λου δεδομ?νων. ?να σ?νολο δεδομ?νων δ?ναται να ?χει πολλαπλ? θ?ματα."@el , "La categoría principal del conjunto de datos. Un conjunto de datos puede tener varios temas."@es , "??????? ??????? ?????? ????????. ????? ???????? ???? ?? ???? ???? ?? ????? ????? ????."@ar ;

@@ -13,6 +13,7 @@ public class JavaType extends Type {
 	private static final Map<String, Package> JAVA_PACKAGES = new HashMap<String, Package>();
 	public static final JavaType LIST = new JavaType(List.class);
 	public static final JavaType ARRAYLIST = new JavaType(ArrayList.class);
+	public static final JavaType OBJECT = new JavaType(Object.class);
 
 	public JavaType(Class<?> clazz) {
 		this.setContainer(getJavaPackage(clazz.getPackage().getName()));

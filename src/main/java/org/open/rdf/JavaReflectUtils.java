@@ -37,7 +37,11 @@ public class JavaReflectUtils {
 	public Map<Field, Object> getJavaFieldGetter(Class<?> java_class) {
 		Map<Field, Object> fieldAccessor = javaFieldGetter.get(java_class);
 		if (fieldAccessor == null) {
+			
 			fieldAccessor = createJavaFieldGetter(java_class);
+			Class<?> parent = java_class.getSuperclass();
+			if(parent != null) 
+				fieldAccessor.putAll(getJavaFieldGetter(parent));
 			javaFieldGetter.put(java_class, fieldAccessor);
 		}
 		return fieldAccessor;

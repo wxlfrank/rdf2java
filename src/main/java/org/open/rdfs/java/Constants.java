@@ -9,6 +9,7 @@ public class Constants {
 	public static final Model DEFAULT_MODEL = ModelFactory.createDefaultModel();
 	public static final PackageEx DEFAULT_PACKAGE = new PackageEx(null, "org.generate.utils", null);
 	public static final String XMLSchema_URI = "http://www.w3.org/2001/XMLSchema#";
+	public static final String Schema_URI = "http://schema.org/#";
 	public static final PackageEx XMLSchema_Package = new PackageEx(null, XMLSchema_URI, DEFAULT_MODEL);
 	static {
 		new ClassEx(XMLSchema_Package, "string", null);

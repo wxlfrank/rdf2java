@@ -215,13 +215,13 @@ oa:     a                   owl:Ontology ;
         rdfs:seeAlso        <http://www.w3.org/TR/annotation-vocab/> ;
         dc:title            "Web Annotation Ontology" ;
         dcterms:creator     [ a          foaf:Person ;
-                              foaf:name  "Robert Sanderson"
-                            ] ;
-        dcterms:creator     [ a          foaf:Person ;
                               foaf:name  "Benjamin Young"
                             ] ;
         dcterms:creator     [ a          foaf:Person ;
                               foaf:name  "Paolo Ciccarese"
+                            ] ;
+        dcterms:creator     [ a          foaf:Person ;
+                              foaf:name  "Robert Sanderson"
                             ] ;
         dcterms:modified    "2016-11-12T21:28:11Z" ;
         owl:versionInfo     "2016-11-12T21:28:11Z" ;

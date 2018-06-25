@@ -18,6 +18,7 @@ import org.open.rdfs.structure.Binding;
 import org.open.rdfs.structure.ClassEx;
 import org.open.rdfs.structure.FieldEx;
 import org.open.rdfs.structure.PackageEx;
+import org.open.rdfs.structure.RDFS2Structure;
 import org.open.structure.Class;
 import org.open.structure.Field;
 import org.open.structure.Interface;
@@ -101,6 +102,19 @@ public class JavaGenerator {
 	 */
 	protected void visit(ClassEx clsEx, File dir, String package_header) {
 		StringBuffer classBuffer = new StringBuffer();
+		RDFS2Structure root = clsEx.getContainer().getContainer();
+		if (root != null) {
+			ClassEx resource = root.getPackageEx("http://www.w3.org/2000/01/rdf-schema#").getClassEx("Resource");
+			if (clsEx.getParents().size() > 1 && clsEx.getParents().contains(resource)) {
+				resource.getFields().forEach(iter -> {
+					FieldEx field = (FieldEx) iter;
+					FieldEx clone = new FieldEx(clsEx, field.getField().getName(), (Resource) field.getSource());
+					clone.setTypes(field.getTypes());
+				});
+				clsEx.getParents().remove(resource);
+				clsEx.getClazz().getParents().remove(resource.getType());
+			}
+		}
 		classBuffer.append(package_header);
 		Class cls = clsEx.getClazz();
 		Map<String, Set<Type>> dependentTypes = getDependentTypes(cls);

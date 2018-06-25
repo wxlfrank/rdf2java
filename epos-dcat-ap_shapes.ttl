@@ -77,6 +77,7 @@ epos:Equipment
   rdfs:comment "A resource representing a generic equipment. E.g. gps sensor, seismic station's channel"@en  ;
   rdfs:isDefinedBy <http://www.epos-eu.org/epos/dcat-ap> ;
   rdfs:label "Equipment"@en  ;
+  rdfs:subClassOf rdfs:Resource ;
   rdfs:subClassOf schema:Product ;
 .
 
@@ -117,6 +118,7 @@ epos:WebService
   a owl:Class ;
   rdfs:comment "It represents a WebService API "@en  ;
   rdfs:subClassOf schema:Service;
+  rdfs:subClassOf rdfs:Resource ;
   rdfs:label "WebService"@en  ;
   rdfs:isDefinedBy <http://www.epos-eu.org/epos/dcat-ap> ;
 .
