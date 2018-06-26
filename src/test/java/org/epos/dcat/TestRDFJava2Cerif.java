@@ -8,15 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
 
-import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.epos_eu.epos_dcat_ap.Equipment;
-import org.epos_eu.epos_dcat_ap.Facility;
-import org.epos_eu.epos_dcat_ap.Organisation;
-import org.epos_eu.epos_dcat_ap.Person;
-import org.epos_eu.epos_dcat_ap.Publication;
-import org.epos_eu.epos_dcat_ap.WebService;
 import org.junit.Test;
 import org.open.rdf.RDFMapper;
 

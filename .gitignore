@@ -1,5 +1,3 @@
 bin/
 target/
 .settings
-src/main/java/com
-src/main/java/org/[^o]*

@@ -1,12 +1,10 @@
 package org.epos.dcat;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -25,9 +23,6 @@ import org.apache.jena.vocabulary.RDFS;
 import org.junit.Assert;
 import org.junit.Test;
 import org.open.rdf.RDFMapper;
-import org.schema.ContactPoint;
-import org.w3._2001_XMLSchema.Date;
-import org.w3.ns_dcat.Dataset;
 
 public class TestRDFMapper {
 
@@ -58,33 +53,33 @@ public class TestRDFMapper {
 		return xmlCalendar;
 	}
 
-	@Test
-	public void test() {
-		RDFMapper mapper = new RDFMapper();
-		Dataset dataset = new Dataset();
-		dataset.setIdentifier(new org.w3._2001_XMLSchema.String("identifier"));
-		try {
-			dataset.setModified(new Date(DatatypeFactory.newInstance()
-					.newXMLGregorianCalendar(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()))));
-		} catch (DatatypeConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ContactPoint cp = new ContactPoint();
-		cp.setTelephone(new org.w3._2001_XMLSchema.String("1234567"));
-		dataset.getContactPoint().add(cp);
-		StringWriter result = new StringWriter();
-		mapper.write(dataset).write(result, "TURTLE");
-		String write = result.getBuffer().toString();
-		System.out.println(write);
-		Model model = ModelFactory.createDefaultModel();
-		model.read(new StringReader(result.getBuffer().toString()), null, "TURTLE");
-		Object javaObject = mapper.read(model);
-		result = new StringWriter();
-		mapper.write(javaObject).write(result, "TURTLE");
-		String read = result.getBuffer().toString();
-		Assert.assertTrue(write.equals(read));
-	}
+//	@Test
+//	public void test() {
+//		RDFMapper mapper = new RDFMapper();
+//		Dataset dataset = new Dataset();
+//		dataset.setIdentifier(new org.w3._2001_XMLSchema.String("identifier"));
+//		try {
+//			dataset.setModified(new Date(DatatypeFactory.newInstance()
+//					.newXMLGregorianCalendar(new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()))));
+//		} catch (DatatypeConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		ContactPoint cp = new ContactPoint();
+//		cp.setTelephone(new org.w3._2001_XMLSchema.String("1234567"));
+//		dataset.getContactPoint().add(cp);
+//		StringWriter result = new StringWriter();
+//		mapper.write(dataset).write(result, "TURTLE");
+//		String write = result.getBuffer().toString();
+//		System.out.println(write);
+//		Model model = ModelFactory.createDefaultModel();
+//		model.read(new StringReader(result.getBuffer().toString()), null, "TURTLE");
+//		Object javaObject = mapper.read(model);
+//		result = new StringWriter();
+//		mapper.write(javaObject).write(result, "TURTLE");
+//		String read = result.getBuffer().toString();
+//		Assert.assertTrue(write.equals(read));
+//	}
 
 	@Test
 	public void testExamples() {
