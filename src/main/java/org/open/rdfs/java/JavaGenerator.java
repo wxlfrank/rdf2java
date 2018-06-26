@@ -16,6 +16,7 @@ import org.open.Util;
 import org.open.rdfs.RDFSUtil;
 import org.open.rdfs.structure.Binding;
 import org.open.rdfs.structure.ClassEx;
+import org.open.rdfs.structure.DataTypeEx;
 import org.open.rdfs.structure.FieldEx;
 import org.open.rdfs.structure.PackageEx;
 import org.open.rdfs.structure.RDFS2Structure;
@@ -41,6 +42,7 @@ public class JavaGenerator {
 	private static final String CLASS_START_BRACKET = String.format("{%n");
 
 	private static final String RDFLITERAL_FIELD = "\tprivate Object value;%n\tpublic %1$s(Object value) {%n\t\tthis.value = value;%n\t}%n\tpublic java.lang.String toString() {%n\t\treturn value != null ? value.toString() : \"null\";%n\t}%n";
+	private static final String RDFLITERAL_FIELD_WITHSUPER = "\tpublic %1$s(Object value) {%n\t\tsuper(value);%n\t}%n";
 
 	private static final String FIELD_RDF_ANNOTATION = "\t@RDF(namespace = \"%1$s\", local = \"%2$s\")%n";
 	private static final String FIELD_DECLARE = "\tprivate %1$s %2$s;%n";
@@ -122,7 +124,8 @@ public class JavaGenerator {
 		importedTypes.forEach(importType -> {
 			classBuffer.append(addImport(importType));
 		});
-		classBuffer.append(cls.getContainer().getName().equals(Constants.XMLSchema_URI) ? RDFLITERAL_ANNOTATION_IMPORT
+		classBuffer.append(clsEx instanceof DataTypeEx || cls.getContainer().getName().equals(Constants.XMLSchema_URI)
+				? RDFLITERAL_ANNOTATION_IMPORT
 				: RDF_ANNOTATION_IMPORT);
 		Map<Type, String> local_type_dic = getLocalTypeName(cls, importedTypes, dependentTypes);
 		visit(clsEx, classBuffer, local_type_dic);
@@ -322,7 +325,8 @@ public class JavaGenerator {
 	 */
 	protected void visit(ClassEx clsEx, StringBuffer buffer, Map<Type, String> type2name) {
 		Class cls = clsEx.getClazz();
-		boolean isXMLLiteral = cls.getContainer().getName().equals(Constants.XMLSchema_URI);
+		boolean isXMLLiteral = clsEx instanceof DataTypeEx
+				|| cls.getContainer().getName().equals(Constants.XMLSchema_URI);
 		buffer.append(String.format(isXMLLiteral ? CLASS_RDFLITERAL_ANNOTATION : CLASS_RDF_ANNOTATION,
 				cls.getContainer().getName(), cls.getName()));
 		for (Binding iter : clsEx.getEquivalence()) {
@@ -348,7 +352,8 @@ public class JavaGenerator {
 			buffer.append(String.format(CLASS_IMPLEMENTS, String.join(", ", intfcs)));
 		buffer.append(CLASS_START_BRACKET);
 		if (isXMLLiteral) {
-			buffer.append(String.format(RDFLITERAL_FIELD, JavaUtil.captializeFirstChar(cls.getName())));
+			buffer.append(String.format(parents.isEmpty() ? RDFLITERAL_FIELD : RDFLITERAL_FIELD_WITHSUPER,
+					JavaUtil.captializeFirstChar(cls.getName())));
 		}
 		for (Binding field : clsEx.getFields()) {
 			visit((FieldEx) field, buffer, type2name);

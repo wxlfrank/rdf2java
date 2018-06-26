@@ -42,6 +42,9 @@ public class RDFS2Structure extends Binding implements Configurable {
 		for (Resource rdfsClass : cache.getClasses(model)) {
 			packageEx.toClassEx(rdfsClass);
 		}
+		for (Resource rdfsClass : cache.getDataTypes(model)) {
+			packageEx.toDataTypeEx(rdfsClass);
+		}
 		// for those properties without domains
 		// for (Resource rdfsProperty : cache.getProperties(model)) {
 		// packageEx.toFieldEx(rdfsProperty);
@@ -59,7 +62,6 @@ public class RDFS2Structure extends Binding implements Configurable {
 				iter.addEquivalence(other);
 			}
 		});
-		System.out.println(model.listStatements(null, OWL.equivalentClass, (RDFNode) null).toList().size());
 		model.listStatements(null, OWL.equivalentClass, (RDFNode) null).forEachRemaining(stm -> {
 			ClassEx classex = packageEx.toClassEx(stm.getSubject());
 			Resource obj = (Resource) stm.getObject();

@@ -36,6 +36,7 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	}
 
 	private Map<Model, Set<Resource>> model2classes = new HashMap<Model, Set<Resource>>();
+	private Map<Model, Set<Resource>> model2datatypes = new HashMap<Model, Set<Resource>>();
 	private Map<Resource, Set<Resource>> property2domains = new HashMap<Resource, Set<Resource>>();
 	private Map<Resource, Set<Resource>> domain2properties = new HashMap<Resource, Set<Resource>>();
 
@@ -50,7 +51,6 @@ public class RDFSUtilWithCache extends RDFSUtil {
 	private Map<Model, Set<Resource>> model2properties = new HashMap<Model, Set<Resource>>();
 
 	private Map<Resource, Set<Resource>> shaclProperties = new HashMap<Resource, Set<Resource>>();
-//	private Map<Resource, Set<Resource>> class2classes = new HashMap<Resource, Set<Resource>>();
 	private Map<Resource, Set<Resource>> property2properties = new HashMap<Resource, Set<Resource>>();
 
 	private Map<Resource, Set<Resource>> shape2classes = new HashMap<Resource, Set<Resource>>();
@@ -62,6 +62,9 @@ public class RDFSUtilWithCache extends RDFSUtil {
 
 	public Set<Resource> getClasses(Model model) {
 		return Util.getFromCache(model2classes, model);
+	}
+	public Set<Resource> getDataTypes(Model model) {
+		return Util.getFromCache(model2datatypes, model);
 	}
 
 	public Set<Resource> getClassesOfShape(Resource source) {
@@ -209,8 +212,16 @@ public class RDFSUtilWithCache extends RDFSUtil {
 				if (uri.equals(OWL.Ontology.getURI()) || uri.equals(RDFS.uri))
 					Util.putIntoCache(model2schemas, model, subject);
 				// subject is a class
-				else if (uri.equals(RDFS.Class.getURI()) || uri.equals(OWL.Class.getURI()))
-					Util.putIntoCache(model2classes, model, subject);
+				else if (uri.equals(RDFS.Class.getURI()) || uri.equals(OWL.Class.getURI())) {
+					Set<Resource> search = Util.getFromCache(model2datatypes, model);
+					if (!search.contains(subject))
+						Util.putIntoCache(model2classes, model, subject);
+				} else if (uri.equals(RDFS.Datatype.getURI())) {
+					Util.putIntoCache(model2datatypes, model, subject);
+					Set<Resource> search = Util.getFromCache(model2classes, model);
+					if (search.contains(subject))
+						search.remove(subject);
+				}
 				// subject is a property
 				else if (uri.equals(RDF.Property.getURI()) || uri.equals(OWL.ObjectProperty.getURI())
 						|| uri.equals(OWL.DatatypeProperty.getURI()))

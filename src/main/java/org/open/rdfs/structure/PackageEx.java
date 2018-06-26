@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.open.Util;
 import org.open.rdfs.RDFSFile;
 import org.open.rdfs.RDFSUtil;
 import org.open.structure.Field;
@@ -69,7 +70,7 @@ public class PackageEx extends Binding implements Configurable {
 				}
 			}
 		}
-		System.out.println("Warning: Property " + RDFSUtil.getId(property) + " has no domains.");
+		Util.addWarning("Warning: Property " + RDFSUtil.getId(property) + " has no domains.");
 		return classes;
 	}
 
@@ -139,8 +140,7 @@ public class PackageEx extends Binding implements Configurable {
 			}
 		}
 		if (ranges.isEmpty()) {
-			System.out.println("Warning: the property " + RDFSUtil.getId(rdfsProperty) + " has no range.");
-			// results.add(Constants.XMLSchema_Package.getClassEx("string"));
+			Util.addWarning("Warning: Property " + RDFSUtil.getId(rdfsProperty) + " has no range.");
 		}
 		return ranges;
 	}
@@ -165,8 +165,6 @@ public class PackageEx extends Binding implements Configurable {
 		// If the resource has different namespace as the model, read the model and find
 		// the corresponding resource, return the model and the resource found
 		PackageEx packageEx = getContainer().getPackageEx(real_ns);
-		if(real_ns.contains("schema.org"))
-			System.out.println("");
 		if (packageEx == null) {
 			RDFSFile rdfsFile = getConfiguration().readWriteModel(real_ns, "TURTLE");
 			packageEx = getContainer().toPackageEx(real_ns, rdfsFile.getModel(), false);
@@ -183,6 +181,12 @@ public class PackageEx extends Binding implements Configurable {
 		Entry<PackageEx, Resource> real = getRealResource(resource);
 		String local = resource.getLocalName();
 		return real.getKey().toClassEx(local, real.getValue());
+	}
+
+	public ClassEx toDataTypeEx(Resource resource) {
+		Entry<PackageEx, Resource> real = getRealResource(resource);
+		String local = resource.getLocalName();
+		return real.getKey().toDataTypeEx(local, real.getValue());
 	}
 
 	/**
@@ -251,7 +255,18 @@ public class PackageEx extends Binding implements Configurable {
 	private ClassEx toClassEx(String className, Resource rdfsClass) {
 		ClassEx classex = getClassEx(className);
 		if (classex == null) {
-			classex = new ClassEx(this, className, rdfsClass);
+			boolean isDataType = RDFSUtilWithCache.INSTANCE.getDataTypes(rdfsClass.getModel()).contains(rdfsClass);
+			classex = isDataType ? new DataTypeEx(this, className, rdfsClass) : new ClassEx(this, className, rdfsClass);
+			classex.setParents(getSuperClass(rdfsClass));
+			supplementClassEx(rdfsClass, classex);
+		}
+		return classex;
+	}
+
+	private ClassEx toDataTypeEx(String className, Resource rdfsClass) {
+		ClassEx classex = getClassEx(className);
+		if (classex == null) {
+			classex = new DataTypeEx(this, className, rdfsClass);
 			classex.setParents(getSuperClass(rdfsClass));
 			supplementClassEx(rdfsClass, classex);
 		}
@@ -300,6 +315,7 @@ public class PackageEx extends Binding implements Configurable {
 	}
 
 	private RDFSUtilWithCache cache = RDFSUtilWithCache.INSTANCE;
+
 	private FieldEx toFieldEx(ClassEx classEx, String local, Resource rdfsProperty) {
 		/**
 		 * create a field in each of the found domains

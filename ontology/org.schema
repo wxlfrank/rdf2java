@@ -384,7 +384,7 @@ schema:BookmarkAction a rdfs:Class ;
     rdfs:comment "An agent bookmarks/flags/labels/tags/marks an object." ;
     rdfs:subClassOf schema:OrganizeAction .
 
-schema:Boolean a schema:DataType,
+schema:Boolean a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "Boolean" ;
     rdfs:comment "Boolean: True or False." .
@@ -907,11 +907,6 @@ schema:DataFeedItem a rdfs:Class ;
     rdfs:comment "A single item within a larger data feed." ;
     rdfs:subClassOf schema:Intangible .
 
-schema:DataType a rdfs:Class ;
-    rdfs:label "DataType" ;
-    rdfs:comment "The basic data types such as Integers, Strings, etc." ;
-    rdfs:subClassOf rdfs:Class .
-
 schema:Dataset a rdfs:Class ;
     rdfs:label "Dataset" ;
     dct:source <http://www.w3.org/wiki/WebSchemas/SchemaDotOrgSources#source_DatasetClass> ;
@@ -921,12 +916,12 @@ schema:Dataset a rdfs:Class ;
         <http://rdfs.org/ns/void#Dataset>,
         <http://www.w3.org/ns/dcat#Dataset> .
 
-schema:Date a schema:DataType,
+schema:Date a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "Date" ;
     rdfs:comment "A date value in <a href=\"http://en.wikipedia.org/wiki/ISO_8601\">ISO 8601 date format</a>." .
 
-schema:DateTime a schema:DataType,
+schema:DateTime a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "DateTime" ;
     rdfs:comment "A combination of date and time of day in the form [-]CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] (see Chapter 5.4 of ISO 8601)." .
@@ -1644,7 +1639,7 @@ schema:Intangible a rdfs:Class ;
     rdfs:comment "A utility class that serves as the umbrella for a number of 'intangible' things such as quantities, structured values, etc." ;
     rdfs:subClassOf schema:Thing .
 
-schema:Integer a rdfs:Class ;
+schema:Integer a rdfs:Datatype ;
     rdfs:label "Integer" ;
     rdfs:comment "Data type: Integer." ;
     rdfs:subClassOf schema:Number .
@@ -2125,7 +2120,7 @@ schema:NoteDigitalDocument a rdfs:Class ;
     rdfs:comment "A file containing a note, primarily for the author." ;
     rdfs:subClassOf schema:DigitalDocument .
 
-schema:Number a schema:DataType,
+schema:Number a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "Number" ;
     rdfs:comment "Data type: Number." .
@@ -3186,7 +3181,7 @@ schema:TennisComplex a rdfs:Class ;
     rdfs:comment "A tennis complex." ;
     rdfs:subClassOf schema:SportsActivityLocation .
 
-schema:Text a schema:DataType,
+schema:Text a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "Text" ;
     rdfs:comment "Data type: Text." .
@@ -3220,7 +3215,7 @@ schema:TieAction a rdfs:Class ;
     rdfs:comment "The act of reaching a draw in a competitive activity." ;
     rdfs:subClassOf schema:AchieveAction .
 
-schema:Time a schema:DataType,
+schema:Time a rdfs:Datatype,
         rdfs:Class ;
     rdfs:label "Time" ;
     rdfs:comment "A point in time recurring on multiple days in the form hh:mm:ss[Z|(+|-)hh:mm] (see <a href=\"http://www.w3.org/TR/xmlschema-2/#time\">XML schema for details</a>)." .
@@ -3308,7 +3303,7 @@ schema:TypeAndQuantityNode a rdfs:Class ;
     rdfs:comment "A structured value indicating the quantity, unit of measurement, and business function of goods included in a bundle offer." ;
     rdfs:subClassOf schema:StructuredValue .
 
-schema:URL a rdfs:Class ;
+schema:URL a rdfs:Datatype ;
     rdfs:label "URL" ;
     rdfs:comment "Data type: URL." ;
     rdfs:subClassOf schema:Text .

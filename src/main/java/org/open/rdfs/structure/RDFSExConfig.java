@@ -50,7 +50,6 @@ public class RDFSExConfig extends Configuration {
 	private static Set<String> STATIC_URLS = new LinkedHashSet<String>();
 	static {
 		STATIC_URLS.addAll(Arrays.asList("http://www.w3.org/2001/XMLSchema#", 
-//				"http://schema.org/#",
 				"http://spdx.org/rdf/terms#"));
 	}
 
@@ -67,10 +66,6 @@ public class RDFSExConfig extends Configuration {
 		String url = rdfs.getLocalPath();
 		if (!STATIC_URLS.contains(url)) {
 			model = model.read(url, rdfs.getFormat());
-			if(url.endsWith("org.schema")) {
-				System.out.println("");
-			}
-			// base = (OntModel) base.union(model);
 			RDFSCACHE.traverseModel(model);
 			String ns = RDFSCACHE.getRealNamespace(model);
 			if (url.equals(ns)) {

@@ -274,8 +274,6 @@ public class RDFMapper {
 		if (java_object instanceof Collection<?>) {
 			List<RDFNode> results = new ArrayList<RDFNode>();
 			for (Object iter : (Collection<?>) java_object) {
-				if (iter == null)
-					System.out.println("");
 				results.add(toRDFResource(rdf_model, iter));
 			}
 			if (!results.isEmpty())
